@@ -1,138 +1,67 @@
-<!DOCTYPE html>
-<html lang="fa" dir="rtl">
-<head>
-<meta charset="utf-8"/>
-<title>چیت‌شیت داده‌های حجیم</title>
+<!DOCTYPE html><html lang="fa" dir="rtl"><head><meta charset="utf-8"><title>چیت‌شیت</title>
 <style>
-@page { size: A4; margin: 1cm; }
-body {
-  direction: rtl;
+@page { size: A4; margin: .8cm; }
+body { direction: rtl; font-family: "DejaVu Sans", Tahoma, sans-serif; font-size: 8.7pt; line-height: 1.28; }
+h1 { font-size: 1.08rem; color: #1a365d; border-bottom: 2px solid #2b6cb0; margin: 0 0 .25rem; }
+.eq {
+  direction: ltr !important; unicode-bidi: bidi-override !important; text-align: center;
+  border: 1.5px solid #2d3748; border-radius: 5px; padding: .28rem; margin: .18rem 0;
+  font-size: 11.5pt; font-weight: 700; background: #edf2f7; font-family: "DejaVu Sans", serif;
+}
+.eq .line { display: block; }
+.where {
+  direction: rtl !important; unicode-bidi: embed !important; text-align: right;
+  font-size: 7.6pt; font-weight: 400; border-top: 1px dashed #a0aec0; margin-top: .12rem; padding-top: .1rem;
   font-family: "DejaVu Sans", Tahoma, sans-serif;
-  font-size: 9.6pt;
-  line-height: 1.35;
-  color: #1a202c;
 }
-h1 {
-  font-size: 1.2rem; color: #1a365d; margin: 0 0 0.4rem;
-  border-bottom: 2px solid #2b6cb0; padding-bottom: 0.2rem;
-}
-h2 {
-  font-size: 1rem; color: #1a365d; background: #ebf8ff;
-  border-right: 4px solid #2b6cb0; padding: 0.2rem 0.4rem;
-  margin: 0.55rem 0 0.3rem;
-}
-table { border-collapse: collapse; width: 100%; margin: 0.25rem 0 0.4rem; font-size: 8.8pt; }
-th, td { border: 1px solid #a0aec0; padding: 0.18rem 0.3rem; text-align: right; vertical-align: top; }
+table { border-collapse: collapse; width: 100%; font-size: 7.8pt; margin: .12rem 0; }
+th, td { border: 1px solid #a0aec0; padding: .08rem .2rem; text-align: right; }
 th { background: #90cdf4; }
-.box {
-  background: #f0fff4; border: 1px solid #68d391; border-right: 3px solid #38a169;
-  padding: 0.3rem 0.45rem; margin: 0.25rem 0; border-radius: 3px;
-}
-.lbl { font-weight: bold; color: #276749; font-size: 8.8pt; margin-bottom: 0.1rem; }
-.f {
-  direction: ltr; unicode-bidi: isolate; text-align: left;
-  font-family: "DejaVu Sans Mono", monospace; font-size: 8.8pt;
-  line-height: 1.35; white-space: pre-wrap; margin: 0;
-}
 .cols { display: table; width: 100%; }
-.col { display: table-cell; width: 50%; vertical-align: top; padding: 0 0.25rem; }
-.note { background: #fffaf0; border-right: 3px solid #dd6b20; padding: 0.25rem 0.4rem; margin: 0.3rem 0; font-size: 8.8pt; }
-</style>
-</head>
-<body>
-<h1>چیت‌شیت یک‌نگاهی — داده‌های حجیم</h1>
-<div class="note">پاسخ امتحان = تعریف یک‌خطی + فرمول + مثال کوتاه. جزئیات بیشتر در جزوه اصلی (§۱ تا §۱۰).</div>
-
-<div class="cols">
-<div class="col">
-
-<h2>تعاریف</h2>
+.col { display: table-cell; width: 50%; vertical-align: top; padding: 0 .12rem; }
+.note { background: #fffaf0; border-right: 3px solid #dd6b20; padding: .12rem .25rem; margin: .15rem 0; font-size: 7.8pt; }
+</style></head><body>
+<h1>چیت‌شیت یک‌صفحه‌ای — داده‌های حجیم</h1>
+<div class="note">پاسخ = تعریف + فرمول + مثال. شماره صفحات = جزوه کامل همین نسخه.</div>
+<div class="cols"><div class="col">
 <table>
 <tr><th>مفهوم</th><th>یک خط</th></tr>
 <tr><td>Shingle</td><td>دنباله k توکن متوالی</td></tr>
-<tr><td>Jaccard</td><td>|A ∩ B| / |A ∪ B|</td></tr>
-<tr><td>MinHash</td><td>Pr[h برابر] = Jaccard</td></tr>
+<tr><td>Jaccard</td><td>|A∩B| / |A∪B|</td></tr>
+<tr><td>MinHash</td><td>Pr[هش برابر] = Jaccard</td></tr>
 <tr><td>LSH</td><td>فقط candidateهای مشابه</td></tr>
-<tr><td>Collab. Filtering</td><td>توصیه با کاربران/آیتم‌های مشابه</td></tr>
-<tr><td>Closed</td><td>بدون ابرمجموعه با همان support</td></tr>
-<tr><td>Maximal</td><td>بدون ابرمجموعه frequent</td></tr>
-<tr><td>MapReduce</td><td>Map + Reduce + fault tolerance</td></tr>
+<tr><td>Collab. Filtering</td><td>توصیه با شباهت کاربر/آیتم</td></tr>
+<tr><td>Closed / Maximal</td><td>M ⊆ C ⊆ F</td></tr>
 </table>
-
-<div class="box"><div class="lbl">TF-IDF</div>
-<pre class="f">TF = f / max_f
-IDF = log2(N / n)
-TF-IDF = TF × IDF
-
-مثال: N=1024,n=128,f=10,max=100
-→ 0.1 × 3 = 0.3</pre></div>
-
-<div class="box"><div class="lbl">Jaccard / MinHash / LSH</div>
-<pre class="f">J = |A ∩ B| / |A ∪ B|
-Pr[hπ(C1)=hπ(C2)] = J
-
-P = 1 − (1 − s^r)^b
-thr ≈ (1/b)^(1/r)</pre></div>
-
-<div class="box"><div class="lbl">فاصله‌ها</div>
-<pre class="f">L2: sqrt(Σ(xi−yi)^2)
-L1: Σ|xi−yi|
-Lr: (Σ|xi−yi|^r)^(1/r)
-L∞: max|xi−yi|
-Cos: (x·y)/(||x||||y||)
-Ham: # diffs
-Edit: |X|+|Y|−2|LCS|
-Nom: (p−m)/p
-Bin: (r+s)/(q+r+s)</pre></div>
-
-</div>
-<div class="col">
-
-<div class="box"><div class="lbl">MapReduce ماتریس×بردار</div>
-<pre class="f">Map:  (i, m_ij × v_j)
-Reduce: u_i = Σ values
-
-مثال:
-M=[[1,0,5],[7,3,0],[1,3,5]]
-V=[2,4,6]
-→ U=[32,26,44]</pre></div>
-
-<div class="box"><div class="lbl">Association / Closed</div>
-<pre class="f">sup(A⇒B)=sup(A∪B)
-conf=sup(A∪B)/sup(A)
-M ⊆ C ⊆ F</pre></div>
-
-<div class="box"><div class="lbl">Cluster vs RDBMS</div>
-<pre class="f">RDBMS: vertical, ACID, expensive
-Cluster: horizontal, commodity,
-         replication, code→data</pre></div>
-
-<div class="box"><div class="lbl">Clustering</div>
-<pre class="f">goal: min intra / max inter
-K-Means: centroid + SSE
-K-Medoids: real point
-DBSCAN: Core/Border/Noise
-BFR: N,SUM,SUMSQ</pre></div>
-
-<div class="box"><div class="lbl">Apriori (اصل)</div>
-<pre class="f">اگر X frequent ⇒ همه
-زیرمجموعه‌هایش frequent
-
-مثال MST=0.3 ، n=8
-⇒ count ≥ 3
-L2={ab,ac,bc,de,df}
-L3={abc}</pre></div>
-
+<div class="eq"><span class="line">TFᵢⱼ = fᵢⱼ / maxₖ(fₖⱼ)</span>
+<span class="line">IDFᵢ = log₂(N / nᵢ)</span>
+<span class="line">TF-IDF = TF × IDF</span>
+<div class="where">مثال استاد: 0.1 × 3 = 0.3</div></div>
+<div class="eq"><span class="line">J = |A∩B| / |A∪B|</span>
+<span class="line">Pr[hπ(C1)=hπ(C2)] = J</span>
+<span class="line">P = 1 − (1 − sʳ)ᵇ</span></div>
+<div class="eq"><span class="line">L₂ = √Σ(xᵢ−yᵢ)²</span>
+<span class="line">L₁ = Σ|xᵢ−yᵢ| &nbsp; L∞ = max|…|</span>
+<span class="line">اسمی: (p − m) / p</span></div>
+</div><div class="col">
+<div class="eq"><span class="line">Map: (i , mᵢⱼ × vⱼ)</span>
+<span class="line">Reduce: uᵢ = Σ (mᵢⱼ × vⱼ)</span>
+<div class="where">مثال: U = [32, 26, 44]</div></div>
+<div class="eq"><span class="line">sup(A⇒B) = sup(A∪B)</span>
+<span class="line">conf = sup(A∪B) / sup(A)</span></div>
 <table>
-<tr><th>سوال نمونه</th><th>بخش جزوه</th></tr>
-<tr><td>تعاریف MinHash/Jaccard/...</td><td>§۱۰-س۱ / چیت‌شیت</td></tr>
-<tr><td>Cluster vs RDBMS</td><td>§۲ / §۱۰-س۲</td></tr>
-<tr><td>Matrix×Vector</td><td>§۵ / §۱۰-س۳</td></tr>
-<tr><td>TF-IDF</td><td>§۱ / §۱۰-س۴</td></tr>
-<tr><td>Apriori</td><td>§۸ / §۱۰-س۵</td></tr>
+<tr><th>موضوع</th><th>صفحه جزوه</th></tr>
+<tr><td>فهرست صفحات</td><td>1</td></tr>
+<tr><td>چیت‌شیت داخل جزوه</td><td>1</td></tr>
+<tr><td>TF-IDF / Collaborative</td><td>2</td></tr>
+<tr><td>Cluster / Hadoop</td><td>3</td></tr>
+<tr><td>MapReduce</td><td>4</td></tr>
+<tr><td>Matrix × Vector</td><td>5</td></tr>
+<tr><td>Shingle / MinHash / LSH</td><td>6</td></tr>
+<tr><td>فاصله‌ها</td><td>8</td></tr>
+<tr><td>Apriori / Closed</td><td>9</td></tr>
+<tr><td>Clustering</td><td>9</td></tr>
+<tr><td><b>حل نمونه سوالات</b></td><td><b>10</b></td></tr>
 </table>
-
-</div>
-</div>
-</body>
-</html>
+</div></div>
+</body></html>
