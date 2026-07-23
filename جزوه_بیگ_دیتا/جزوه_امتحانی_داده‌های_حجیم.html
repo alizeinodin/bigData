@@ -1,739 +1,265 @@
-<!DOCTYPE html>
-<html lang="fa" dir="rtl">
-<head>
-<meta charset="utf-8"/>
-<title>جزوه امتحانی داده‌های حجیم</title>
-<style>
-@page {
-  size: A4;
-  margin: 1.25cm 1.15cm 1.5cm 1.15cm;
-  @bottom-center {
-    content: "صفحه " counter(page);
-    font-size: 9pt;
-    color: #4a5568;
-    direction: rtl;
-  }
-}
-* { box-sizing: border-box; }
-body {
-  direction: rtl;
-  font-family: "DejaVu Sans", Tahoma, sans-serif;
-  font-size: 10.2pt;
-  line-height: 1.5;
-  color: #1a202c;
-}
-h1 {
-  font-size: 1.4rem;
-  color: #1a365d;
-  border-bottom: 3px solid #2b6cb0;
-  padding-bottom: 0.3rem;
-  margin: 0.2rem 0 0.7rem;
-}
-h2 {
-  font-size: 1.12rem;
-  color: #1a365d;
-  background: #ebf8ff;
-  border-right: 5px solid #2b6cb0;
-  padding: 0.32rem 0.55rem;
-  margin: 1.1rem 0 0.55rem;
-  page-break-after: avoid;
-}
-h3 {
-  font-size: 1.02rem;
-  color: #2c5282;
-  margin: 0.75rem 0 0.35rem;
-  page-break-after: avoid;
-}
-p { margin: 0.35rem 0; text-align: justify; }
-ul, ol { margin: 0.3rem 0; padding-right: 1.2rem; }
-li { margin: 0.15rem 0; }
-table {
-  border-collapse: collapse;
-  width: 100%;
-  margin: 0.45rem 0 0.7rem;
-  font-size: 9.2pt;
-  page-break-inside: avoid;
-}
-th, td {
-  border: 1px solid #a0aec0;
-  padding: 0.25rem 0.4rem;
-  text-align: right;
-  vertical-align: top;
-}
-th { background: #90cdf4; color: #1a365d; }
-tr:nth-child(even) td { background: #f7fafc; }
-.box {
-  background: #f0fff4;
-  border: 1px solid #68d391;
-  border-right: 4px solid #38a169;
-  padding: 0.45rem 0.6rem;
-  margin: 0.35rem 0 0.55rem;
-  page-break-inside: avoid;
-  border-radius: 4px;
-}
-.box .lbl {
-  font-weight: bold;
-  color: #276749;
-  margin-bottom: 0.2rem;
-  font-size: 9.5pt;
-}
-.f {
-  direction: ltr;
-  unicode-bidi: isolate;
-  text-align: left;
-  font-family: "DejaVu Sans Mono", "Courier New", monospace;
-  font-size: 9.6pt;
-  line-height: 1.42;
-  white-space: pre-wrap;
-  margin: 0;
-}
-.note {
-  background: #fffaf0;
-  border-right: 4px solid #dd6b20;
-  padding: 0.4rem 0.55rem;
-  margin: 0.5rem 0;
-  color: #7b341e;
-  page-break-inside: avoid;
-}
-.meta { color: #2d3748; margin-bottom: 0.6rem; }
-.meta b { color: #1a365d; }
-.small { font-size: 9.2pt; color: #4a5568; }
-.tag {
-  display: inline-block;
-  background: #2b6cb0;
-  color: white;
-  padding: 0.05rem 0.4rem;
-  border-radius: 3px;
-  font-size: 8.5pt;
-  margin-left: 0.25rem;
-}
-.sec { page-break-before: auto; }
-.keep { page-break-inside: avoid; }
-hr { border: none; border-top: 1px dashed #a0aec0; margin: 0.8rem 0; }
-</style>
-</head>
-<body>
-
+<!DOCTYPE html><html lang="fa" dir="rtl"><head><meta charset="utf-8"><title>جزوه امتحانی داده‌های حجیم</title></head><body>
 <h1>جزوه امتحانی — داده‌های حجیم (Big Data Analytics)</h1>
 <div class="meta">
-  <b>استاد:</b> دکتر فرساد زمانی بروجنی &nbsp;|&nbsp;
-  <b>امتحان:</b> جزوه‌باز — ۹۰ دقیقه &nbsp;|&nbsp;
-  <b>منبع:</b> لکچرهای ترم + نمونه سوالات + MMDS
+<b>استاد:</b> دکتر فرساد زمانی بروجنی &nbsp;|&nbsp;
+<b>امتحان:</b> جزوه‌باز — ۹۰ دقیقه &nbsp;|&nbsp;
+<b>منبع:</b> لکچرهای ترم + نمونه سوالات + MMDS
 </div>
-
 <div class="note">
-  <b>در امتحان:</b>
-  ۱) اول چیت‌شیت و راهنمای صفحات را ببین &nbsp;
-  ۲) موضوع را در جدول پیدا کن و به بخش برو &nbsp;
-  ۳) پاسخ = تعریف یک‌خطی + فرمول + مثال کوتاه &nbsp;
-  ۴) اگر شبیه نمونه استاد بود → بخش ۱۰
+<b>روش پاسخ:</b> تعریف یک‌خطی ← فرمول داخل باکس ← مثال عددی کوتاه.
+اول <b>فهرست صفحات</b> و <b>چیت‌شیت</b> را ببین. اگر سوال شبیه نمونه استاد بود → بخش 10.
 </div>
 
-<!-- ===================== CHEAT SHEET ===================== -->
-<h2>چیت‌شیت سریع (صفحه اول امتحان)</h2>
 
-<h3>تعاریف یک‌خطی</h3>
+<h2>فهرست صفحات (شماره واقعی همین PDF) <span class="mark">[INDEX]</span></h2>
+<div class="note">در امتحان برو به <b>شماره صفحه</b> ستون آخر. این شماره‌ها با پاصفحه PDF یکی هستند.</div>
 <table>
-<tr><th>مفهوم</th><th>تعریف کوتاه</th></tr>
-<tr><td><b>Shingle</b></td><td>دنبالهٔ k توکن متوالی در سند. مثال k=2 از abcab → {ab, bc, ca}</td></tr>
-<tr><td><b>Jaccard</b></td><td>شباهت دو مجموعه = |A ∩ B| / |A ∪ B|</td></tr>
-<tr><td><b>MinHash</b></td><td>درهم‌سازی طوری که احتمال برابر شدن hash دو مجموعه = Jaccard باشد</td></tr>
+<tr><th>کلمه کلیدی سوال</th><th>بخش</th><th>چه بنویسی</th><th>صفحه</th></tr>
+<tr><td>چیت‌شیت و فرمول‌های حیاتی</td><td>چیت‌شیت</td><td>تعریف + فرمول</td><td><b>1</b></td></tr>
+<tr><td>TF-IDF / Collaborative Filtering</td><td>بخش 1</td><td>فرمول + مثال عددی</td><td><b>2</b></td></tr>
+<tr><td>Cluster ↔ RDBMS / Hadoop</td><td>بخش 2</td><td>جدول تفاوت‌ها</td><td><b>3</b></td></tr>
+<tr><td>MapReduce / Combiner / Pregel</td><td>بخش 3</td><td>۳ مرحله + خرابی</td><td><b>4</b></td></tr>
+<tr><td>Join / جبر رابطه‌ای</td><td>بخش 4</td><td>مثال Join</td><td><b>5</b></td></tr>
+<tr><td>Matrix × Vector</td><td>بخش 5</td><td>Map/Reduce + عدد</td><td><b>5</b></td></tr>
+<tr><td>Shingle / Jaccard / MinHash / LSH / PCY</td><td>بخش 6</td><td>تعریف + فرمول + مثال</td><td><b>6</b></td></tr>
+<tr><td>فاصله‌ها / اسمی / دودویی</td><td>بخش 7</td><td>فرمول + مثال</td><td><b>8</b></td></tr>
+<tr><td>Apriori / Closed / Maximal</td><td>بخش 8</td><td>Passها + M⊆C⊆F</td><td><b>9</b></td></tr>
+<tr><td>Clustering / K-Means / DBSCAN / BFR</td><td>بخش 9</td><td>مثال یک تکرار</td><td><b>9</b></td></tr>
+<tr><td><b>حل نمونه سوالات استاد</b></td><td><b>بخش 10</b></td><td><b>پاسخ آماده</b></td><td><b>10</b></td></tr>
+</table>
+<p class="small">کل صفحات PDF: <b>11</b> &nbsp;|&nbsp;
+چیت‌شیت ص1 ·
+1:2 · 2:3 · 3:4 · 4:5 · 5:5 ·
+6:6 · 7:8 · 8:9 · 9:9 · 10:10</p>
+
+<h2>چیت‌شیت سریع <span class="mark">[CHEAT]</span></h2>
+<table>
+<tr><th>مفهوم</th><th>تعریف یک‌خطی (همین را بنویس)</th></tr>
+<tr><td><b>Shingle</b></td><td>دنباله k حرف/کلمه پشت‌سرهم در سند</td></tr>
+<tr><td><b>Jaccard</b></td><td>اندازه اشتراک دو مجموعه ÷ اندازه اجتماع</td></tr>
+<tr><td><b>MinHash</b></td><td>احتمال برابر شدن hash دو مجموعه = Jaccard</td></tr>
 <tr><td><b>LSH</b></td><td>فقط جفت‌های احتمالاً مشابه را candidate می‌کند</td></tr>
-<tr><td><b>Collaborative Filtering</b></td><td>توصیه بر اساس کاربران یا آیتم‌های مشابه</td></tr>
-<tr><td><b>Closed itemset</b></td><td>هیچ ابرمجموعه‌ای با همان support ندارد</td></tr>
-<tr><td><b>Maximal itemset</b></td><td>هیچ ابرمجموعه frequent ندارد</td></tr>
-<tr><td><b>MapReduce</b></td><td>پردازش موازی با دو تابع Map و Reduce + تحمل خرابی</td></tr>
+<tr><td><b>Collaborative Filtering</b></td><td>توصیه بر اساس کاربران یا آیتم‌های شبیه</td></tr>
+<tr><td><b>Closed itemset</b></td><td>پرتکرار؛ هیچ ابرمجموعه‌ای با همان support ندارد</td></tr>
+<tr><td><b>Maximal itemset</b></td><td>پرتکرار؛ هیچ ابرمجموعه پرتکراری ندارد</td></tr>
+<tr><td><b>MapReduce</b></td><td>پردازش موازی با Map و Reduce + تحمل خرابی</td></tr>
 </table>
-
-<h3>فرمول‌های حیاتی</h3>
-
-<div class="box keep"><div class="lbl">TF-IDF</div>
-<pre class="f">TF(i,j)  =  f(i,j) / max_k f(k,j)
-IDF(i)   =  log2( N / n(i) )
-TF-IDF   =  TF(i,j) × IDF(i)</pre></div>
-
-<div class="box keep"><div class="lbl">Jaccard و MinHash</div>
-<pre class="f">J(A,B) = |A ∩ B| / |A ∪ B|
-d_J    = 1 − J(A,B)
-
-Pr[ hπ(C1) = hπ(C2) ] = J(C1, C2)</pre></div>
-
-<div class="box keep"><div class="lbl">LSH Banding &nbsp; (b باند، هر باند r سطر، شباهت s)</div>
-<pre class="f">P(candidate) = 1 − (1 − s^r)^b
-threshold   ≈ (1/b)^(1/r)</pre></div>
-
-<div class="box keep"><div class="lbl">فاصله‌ها</div>
-<pre class="f">Euclidean L2 :  sqrt( Σ (xi − yi)^2 )
-Manhattan L1 :  Σ |xi − yi|
-Minkowski Lr :  ( Σ |xi − yi|^r )^(1/r)
-Chebyshev L∞ :  max |xi − yi|
-Cosine sim   :  (x · y) / ( ||x|| × ||y|| )
-Cosine dist  :  1 − cos(θ)
-Hamming      :  # differing positions
-Edit         :  |X| + |Y| − 2×|LCS|
-Nominal      :  d = (p − m) / p
-Asym. binary :  d = (r+s)/(q+r+s) ;  J = q/(q+r+s)</pre></div>
-
-<div class="box keep"><div class="lbl">Association Rule و Closed/Maximal</div>
-<pre class="f">support(A ⇒ B)    = support(A ∪ B)
-confidence(A ⇒ B) = support(A ∪ B) / support(A)
-
-M ⊆ C ⊆ F</pre></div>
-
-<div class="box keep"><div class="lbl">MapReduce — ضرب ماتریس در بردار &nbsp; U = M × V</div>
-<pre class="f">Map:     emit( i ,  m_ij × v_j )     for each m_ij
-Reduce:  u_i = Σ_j (m_ij × v_j)     for each i</pre></div>
-
-<div class="box keep"><div class="lbl">K-Means / DBSCAN / BFR</div>
-<pre class="f">SSE = Σ || x − μ_cluster(x) ||^2
-
-DBSCAN Core:   |N_Eps(q)| ≥ MinPts
-       Border: near a Core, but not Core
-       Noise:  neither
-
-BFR:  N , SUM , SUMSQ
-centroid_i = SUM_i / N
-variance_i = SUMSQ_i/N − (SUM_i/N)^2</pre></div>
-
-<h3>مقایسه سریع</h3>
+<div class="eq"><span class="line">TFᵢⱼ  =  fᵢⱼ  /  maxₖ(fₖⱼ)</span><span class="line">IDFᵢ   =  log₂(N / nᵢ)</span><span class="line">TF-IDF = TFᵢⱼ × IDFᵢ</span><div class="where"><b>که در آن:</b><div>fᵢⱼ = تعداد تکرار کلمه i در سند j</div><div>maxₖ(fₖⱼ) = بیشترین تکرار هر کلمه در همان سند j</div><div>N = تعداد کل اسناد</div><div>nᵢ = تعداد اسنادی که کلمه i در آن‌ها آمده</div></div></div><div class="eq"><span class="line">J(A, B) = |A ∩ B| / |A ∪ B|</span><span class="line">Pr[ hπ(C₁) = hπ(C₂) ] = J(C₁, C₂)</span><span class="line">P(candidate) = 1 − (1 − sʳ)ᵇ</span></div><div class="eq"><span class="line">L₂ = √ Σ (xᵢ − yᵢ)²          L₁ = Σ |xᵢ − yᵢ|</span><span class="line">L∞ = max |xᵢ − yᵢ|           اسمی: d = (p − m) / p</span><span class="line">support(A⇒B) = support(A ∪ B)</span><span class="line">confidence(A⇒B) = support(A ∪ B) / support(A)</span><span class="line">M ⊆ C ⊆ F</span></div><div class="eq"><span class="line">Map: (i , mᵢⱼ × vⱼ)     Reduce: uᵢ = Σⱼ (mᵢⱼ × vⱼ)</span></div>
 <table>
-<tr><th>موضوع</th><th>نکته طلایی</th></tr>
-<tr><td>RDBMS در برابر Cluster</td><td>عمودی/گران/ACID در برابر افقی/commodity/replication و انتقال کد به داده</td></tr>
-<tr><td>K-Means در برابر K-Medoids</td><td>میانگین (حساس به پرت) در برابر نقطه واقعی داده (مقاوم‌تر)</td></tr>
-<tr><td>Closed در برابر Maximal</td><td>Closed اطلاعات support را نگه می‌دارد؛ Maximal فقط مرز را</td></tr>
-<tr><td>Cosine در برابر اقلیدسی برای متن</td><td>Cosine برای بردارهای sparse متن بهتر است</td></tr>
-<tr><td>Combiner</td><td>فقط وقتی Reduce انجمنی و جابجایی‌پذیر باشد</td></tr>
+<tr><th>مقایسه</th><th>نکته طلایی</th></tr>
+<tr><td>RDBMS ↔ Cluster</td><td>عمودی/ACID ↔ افقی/commodity و انتقال کد به داده</td></tr>
+<tr><td>K-Means ↔ K-Medoids</td><td>میانگین (حساس به پرت) ↔ نقطه واقعی داده</td></tr>
+<tr><td>Combiner</td><td>فقط اگر Reduce انجمنی و جابجایی‌پذیر باشد</td></tr>
 </table>
 
-<!-- ===================== PAGE INDEX ===================== -->
-<h2>راهنمای صفحات / ایندکس سریع (اول جزوه)</h2>
-<div class="note">در امتحان: کلمه کلیدی سوال را اینجا پیدا کن → برو به بخش گفته‌شده.</div>
-
-<table>
-<tr><th>کلمه کلیدی سوال</th><th>بخش</th><th>چه بنویسی</th></tr>
-<tr><td>Shingle</td><td>§۶ + چیت‌شیت</td><td>تعریف + مثال abcab</td></tr>
-<tr><td>Jaccard</td><td>§۶ + چیت‌شیت</td><td>فرمول |∩|/|∪|</td></tr>
-<tr><td>MinHash / درهم‌سازی مین</td><td>§۶ + چیت‌شیت</td><td>تعریف + Pr = Jaccard</td></tr>
-<tr><td>Collaborative Filtering</td><td>§۱ + چیت‌شیت</td><td>User-based / Item-based</td></tr>
-<tr><td>Cluster در برابر RDBMS</td><td>§۲</td><td>جدول تفاوت‌ها</td></tr>
-<tr><td>Matrix-Vector / ضرب ماتریس×بردار</td><td>§۵</td><td>Map و Reduce کامل</td></tr>
-<tr><td>TF-IDF</td><td>§۱ و §۱۰-س۴</td><td>سه فرمول + عدد</td></tr>
-<tr><td>Apriori</td><td>§۸ و §۱۰-س۵</td><td>مراحل Pass به Pass</td></tr>
-<tr><td>LSH / banding</td><td>§۶</td><td>فرمول 1−(1−s^r)^b</td></tr>
-<tr><td>Support / Confidence</td><td>§۸</td><td>دو فرمول قانون</td></tr>
-<tr><td>Closed / Maximal</td><td>§۸</td><td>تعریف + M⊆C⊆F</td></tr>
-<tr><td>فاصله اقلیدسی / منهتن / L∞</td><td>§۷</td><td>فرمول‌ها</td></tr>
-<tr><td>تشابه اسمی / دودویی</td><td>§۷</td><td>(p−m)/p و q,r,s,t</td></tr>
-<tr><td>MapReduce تعریف</td><td>§۳</td><td>سه مرحله + Combiner</td></tr>
-<tr><td>خرابی نودها</td><td>§۳</td><td>جدول Master/Map/Reduce</td></tr>
-<tr><td>Join با MapReduce</td><td>§۴</td><td>کلید = صفت مشترک</td></tr>
-<tr><td>Clustering تعریف</td><td>§۹</td><td>min intra / max inter</td></tr>
-<tr><td>K-Means</td><td>§۹</td><td>مراحل + مثال</td></tr>
-<tr><td>DBSCAN</td><td>§۹</td><td>Core / Border / Noise</td></tr>
-<tr><td>BFR / CURE</td><td>§۹</td><td>خلاصه‌ها / نماینده‌ها</td></tr>
-<tr><td>Hadoop / HDFS</td><td>§۲</td><td>Scalable + Fault Tolerant</td></tr>
-<tr><td><b>نمونه سوالات استاد با حل</b></td><td><b>§۱۰</b></td><td><b>اول اینجا را ببین</b></td></tr>
-</table>
-
-<p class="small"><b>شماره بخش‌ها:</b>
-§۱ مقدمه و TF-IDF &nbsp;·&nbsp;
-§۲ Cluster / RDBMS &nbsp;·&nbsp;
-§۳ MapReduce &nbsp;·&nbsp;
-§۴ جبر رابطه‌ای &nbsp;·&nbsp;
-§۵ ضرب ماتریس &nbsp;·&nbsp;
-§۶ Similar Items &nbsp;·&nbsp;
-§۷ فاصله‌ها &nbsp;·&nbsp;
-§۸ Frequent Itemsets &nbsp;·&nbsp;
-§۹ خوشه‌بندی &nbsp;·&nbsp;
-§۱۰ حل نمونه سوالات
-</p>
-
-<hr>
-
-<!-- ===================== §1 ===================== -->
-<div class="sec">
-<h2>§۱ — مقدمه Big Data و مفاهیم پایه</h2>
-
-<h3>تعریف Big Data (سه V)</h3>
+<h2>بخش 1 — مقدمه Big Data و TF-IDF <span class="mark">[S1]</span></h2>
+<h3>سه V</h3>
 <ul>
-<li><b>Volume:</b> حجم آن‌قدر زیاد است که با سیستم‌های معمولی قابل پردازش نیست.</li>
-<li><b>Velocity:</b> داده با نرخ بالا تولید می‌شود.</li>
-<li><b>Variety:</b> داده در شکل‌های مختلف است (ساخت‌یافته / نیمه‌ساخت‌یافته / بدون ساختار).</li>
+<li><b>Volume:</b> حجم خیلی زیاد</li>
+<li><b>Velocity:</b> تولید با سرعت بالا</li>
+<li><b>Variety:</b> شکل‌های مختلف داده</li>
 </ul>
-
-<h3>داده‌کاوی</h3>
-<p>استخراج الگو، مدل یا دانش مفید از داده. دیدگاه‌ها: آماری → توزیع‌ها؛ یادگیری ماشین → مدل پیش‌بینی؛ الگوریتمی → روش مقیاس‌پذیر.</p>
-
-<h3>دو تکنیک محاسباتی مهم</h3>
-<ol>
-<li>خلاصه‌سازی داده‌ها (مثل PageRank و خوشه‌بندی)</li>
-<li>استخراج ویژگی (مثل frequent itemsets، شناسایی مشابه، توصیه‌گر)</li>
-</ol>
-
-<h3>PageRank (ایده)</h3>
-<p>رتبه‌بندی صفحات وب بر اساس لینک‌ها: اهمیت یک صفحه تابعی از اهمیت صفحاتی است که به آن لینک داده‌اند.</p>
-
-<h3>اصل Bonferroni</h3>
-<p>در داده عظیم، رویدادهای بسیار نادر هم ممکن است زیاد رخ دهند؛ پس بسیاری از یافته‌ها می‌توانند False Positive باشند.</p>
-
-<div class="box keep"><div class="lbl">عدد e</div>
-<pre class="f">e ≈ 2.718
-e = lim (1 + 1/n)^n          as n → ∞
-(1 + a)^b ≈ e^(a×b)
-(1 − p)^n ≈ e^(−p×n)</pre></div>
-
-<h3>TF-IDF (خیلی مهم)</h3>
-<p>کلمه مفید: در تعداد کمی سند، تکرار زیاد دارد. Stop wordها در همه اسناد پرتکرارند → IDF نزدیک صفر.</p>
-
-<div class="box keep"><div class="lbl">فرمول</div>
-<pre class="f">TF(i,j) = f(i,j) / max_k f(k,j)
-IDF(i)  = log2( N / n(i) )
-TF-IDF  = TF(i,j) × IDF(i)
-
-f(i,j)     = count of word i in doc j
-max_k f(k,j) = max word count in doc j
-N          = number of documents
-n(i)       = docs containing word i</pre></div>
-
-<div class="box keep"><div class="lbl">مثال نمونه سوال استاد</div>
-<pre class="f">N = 1024 ,  n(w) = 128 ,  f(w,j) = 10 ,  max = 100
-
-TF     = 10 / 100 = 0.1
-IDF    = log2(1024 / 128) = log2(8) = 3
-TF-IDF = 0.1 × 3 = 0.3</pre></div>
-
-<h3>Collaborative Filtering (فیلترینگ مشارکتی)</h3>
-<p>روشی در سیستم‌های توصیه‌گر: بر اساس رفتار یا امتیاز کاربران مشابه، آیتم‌هایی به کاربر هدف پیشنهاد می‌شود.</p>
+<p><b>داده‌کاوی:</b> استخراج الگو/دانش مفید از داده.</p>
+<p><b>دو تکنیک:</b> خلاصه‌سازی (PageRank، خوشه‌بندی) و استخراج ویژگی (مشابهت، frequent itemsets، توصیه‌گر).</p>
+<p><b>PageRank:</b> صفحه مهم است اگر از صفحات مهم لینک بگیرد.</p>
+<p><b>اصل Bonferroni:</b> در داده عظیم، رخداد خیلی نادر هم زیاد دیده می‌شود → خطر False Positive.</p>
+<p><b>Hash:</b> h(x) = x mod B &nbsp;|&nbsp; <b>Index:</b> بازیابی سریع رکورد &nbsp;|&nbsp; <b>دیسک:</b> خیلی کندتر از RAM؛ الگوریتم باید I/O کم کند.</p>
+<h3>TF-IDF به زبان ساده</h3>
+<p>کلمه مفید = در <b>تعداد کمی سند</b>، <b>زیاد</b> تکرار شده. کلماتی مثل «و» یا the که همه جا هستند، مفید نیستند (stop words).</p>
+<div class="eq"><span class="line">TFᵢⱼ = fᵢⱼ / maxₖ(fₖⱼ)</span><span class="line">IDFᵢ = log₂(N / nᵢ)</span><span class="line">TF-IDF = TFᵢⱼ × IDFᵢ</span></div><div class="ex"><div class="title">مثال 1 — دقیقاً مثل سوال استاد (قدم‌به‌قدم)</div><div class="step">فرض: تعداد کل اسناد N = 1024</div><div class="step">کلمه w در 128 سند آمده (n = 128)</div><div class="step">در سند j این کلمه 10 بار آمده</div><div class="step">پرتکرارترین کلمه همان سند 100 بار آمده</div><div class="calc">گام 1) TF = 10 / 100 = 0.1
+گام 2) IDF = log2(1024 / 128) = log2(8) = 3
+         چون 2^3 = 8
+گام 3) TF-IDF = 0.1 × 3 = 0.3</div><div class="ans">پاسخ نهایی: 0.3</div></div><div class="ex"><div class="title">مثال 2 — برای فهم بهتر</div><div class="step">اگر کلمه‌ای در همه سندها باشد: IDF = log2(1) = 0 → بی‌اهمیت.</div><div class="step">کلمه «هادوپ» فقط در 1 سند از 3 سند آمده، 8 بار؛ max همان سند = 20:</div><div class="calc">TF = 8/20 = 0.4
+IDF = log2(3/1) ≈ 1.58
+TF-IDF ≈ 0.4 × 1.58 = 0.63</div><div class="ans">پاسخ نهایی: ≈ 0.63</div></div>
+<h3>Collaborative Filtering</h3>
 <ul>
-<li><b>User-based:</b> کاربران شبیه کاربر هدف را پیدا کن → آیتم‌های مورد علاقه آن‌ها را پیشنهاد بده</li>
-<li><b>Item-based:</b> آیتم‌های شبیه آیتم‌های پسندیده‌شده را پیشنهاد بده</li>
+<li><b>User-based:</b> کاربران شبیه تو چه چیزهایی را پسندیده‌اند؟ همان‌ها را به تو پیشنهاد بده.</li>
+<li><b>Item-based:</b> آیتم‌های شبیه آنچه پسندیده‌ای را پیشنهاد بده.</li>
 </ul>
-<p class="small">در درس به Recommendation Engine (مثل Netflix و Amazon) و Behavioral Data اشاره شده است.</p>
-</div>
+<p class="small">در درس به Recommendation Engine (مثل Netflix و Amazon) و Behavioral Data اشاره شده.</p>
 
-<!-- ===================== §2 ===================== -->
-<div class="sec">
-<h2>§۲ — Cluster Computing در برابر RDBMS</h2>
-
-<h3>محدودیت‌های RDBMS</h3>
-<ol>
-<li>مقیاس‌پذیری گران/ضعیف در حد ترابایت و پتابایت</li>
-<li>سرعت</li>
-<li>تحمل خرابی</li>
-<li>پردازش‌های پیشرفته</li>
-<li>پرس‌وجوپذیری روی داده حجیم</li>
-</ol>
-
-<h3>ویژگی‌های Cluster Computing</h3>
-<ol>
-<li>High Availability</li>
-<li>Fault Tolerance</li>
-<li>Data Replication</li>
-<li>Load Balancing</li>
-<li>Automated Failover</li>
-<li>Backup and Recovery</li>
-<li>Monitoring and Alerting</li>
-<li>Scalability (افقی)</li>
-</ol>
-
+<h2>بخش 2 — Cluster Computing در برابر RDBMS و Hadoop <span class="mark">[S2]</span></h2>
+<p><b>محدودیت‌های RDBMS:</b> مقیاس‌پذیری گران، سرعت، تحمل خرابی، پردازش پیشرفته روی ترابایت/پتابایت.</p>
+<p><b>ویژگی‌های Cluster (حفظ کن):</b> High Availability، Fault Tolerance، Data Replication، Load Balancing، Automated Failover، Backup & Recovery، Monitoring، Scalability افقی.</p>
 <table>
 <tr><th>موضوع</th><th>RDBMS سنتی</th><th>Cluster / Hadoop</th></tr>
-<tr><td>سخت‌افزار</td><td>سرور گران high-end</td><td>commodity server ارزان</td></tr>
-<tr><td>مقیاس</td><td>غالباً عمودی</td><td>افقی</td></tr>
-<tr><td>داده</td><td>ساخت‌یافته، جدولی</td><td>ساخت‌یافته + بدون ساختار</td></tr>
-<tr><td>تحمل خرابی</td><td>سخت‌افزاری/گران</td><td>نرم‌افزاری با replication</td></tr>
-<tr><td>ایده پردازش</td><td>انتقال داده به سمت کد</td><td><b>انتقال کد به سمت داده</b></td></tr>
-<tr><td>مدل</td><td>SQL و ACID قوی</td><td>MapReduce / NoSQL</td></tr>
+<tr><td>سخت‌افزار</td><td>سرور گران</td><td>commodity ارزان</td></tr>
+<tr><td>مقیاس</td><td>عمودی (تقویت یک سرور)</td><td>افقی (افزودن نود)</td></tr>
+<tr><td>تحمل خرابی</td><td>غالباً سخت‌افزاری</td><td>نرم‌افزاری با replication</td></tr>
+<tr><td>ایده پردازش</td><td>داده را پیش کد ببر</td><td><b>کد را پیش داده ببر</b></td></tr>
 </table>
+<div class="ex"><div class="title">نمونه پاسخ آماده برای امتحان</div><div class="step">۱) RDBMS برای داده ساخت‌یافته و تراکنش ACID عالی است، ولی وقتی داده خیلی بزرگ شود هزینه و سرعت مشکل می‌شود.</div><div class="step">۲) Cluster Computing با سرورهای ارزان، کپی داده و failover خودکار، مقیاس افقی می‌دهد.</div><div class="step">۳) جمله طلایی: در Hadoop به‌جای کشیدن همه داده به یک ماشین، برنامه را به جایی می‌فرستیم که داده هست.</div></div>
+<p><b>Hadoop:</b> Scalable + Fault Tolerant &nbsp;|&nbsp; HDFS + MapReduce &nbsp;|&nbsp;
+NameNode / DataNode / JobTracker / TaskTracker &nbsp;|&nbsp; معمولاً هر chunk سه کپی دارد.</p>
+<p><b>SQL در برابر NoSQL:</b> SQL اسکیمای ثابت و ACID؛ NoSQL اسکیما انعطاف‌پذیر و مقیاس افقی.</p>
 
-<h3>SQL در برابر NoSQL</h3>
-<ul>
-<li><b>SQL:</b> اسکیمای ثابت، ACID، مقیاس عمودی، مناسب تراکنش و پرس‌وجوی پیچیده</li>
-<li><b>NoSQL:</b> اسکیما انعطاف‌پذیر، مقیاس افقی، مناسب داده حجیم و متنوع</li>
-</ul>
-
-<h3>Hadoop</h3>
-<ul>
-<li>دو ویژگی: <b>Scalable</b> + <b>Fault Tolerant</b></li>
-<li>اجزا: HDFS + MapReduce API</li>
-<li>Daemonها: NameNode ، DataNode ، JobTracker ، TaskTracker</li>
-<li>HDFS فایل را به chunk تقسیم می‌کند؛ معمولاً replication = 3</li>
-<li>حالت‌ها: Standalone / Pseudo-Distributed / Fully Distributed</li>
-</ul>
-</div>
-
-<!-- ===================== §3 ===================== -->
-<div class="sec">
-<h2>§۳ — MapReduce</h2>
-
-<p><b>تعریف:</b> سبک محاسباتی برای پردازش داده حجیم با تحمل خرابی. کاربر فقط دو تابع Map و Reduce می‌نویسد.</p>
-
-<h3>سه مرحله</h3>
+<h2>بخش 3 — MapReduce <span class="mark">[S3]</span></h2>
+<p>تو فقط دو تابع می‌نویسی؛ سیستم بقیه کار را می‌کند.</p>
 <ol>
-<li><b>Map:</b> هر Map Task یک یا چند chunk می‌گیرد و زوج‌های (key, value) تولید می‌کند.</li>
-<li><b>Shuffle / Sort / Group:</b> Master خروجی‌ها را بر اساس key گروه‌بندی می‌کند.</li>
-<li><b>Reduce:</b> برای هر کلید، مقادیر را ترکیب می‌کند.</li>
+<li><b>Map:</b> هر تکه ورودی را بخوان و جفت‌های (کلید، مقدار) بساز.</li>
+<li><b>Shuffle:</b> همه مقدارهایی که کلید یکسان دارند را در یک لیست بگذار.</li>
+<li><b>Reduce:</b> برای هر کلید، لیست مقدارها را ترکیب کن (جمع، شمارش، ...).</li>
 </ol>
+<div class="eq"><span class="line">Map:     input  →  (key, value)</span><span class="line">Shuffle: (k,v1), (k,v2), ...  →  (k, [v1, v2, ...])</span><span class="line">Reduce:  (k, [v1, v2, ...])  →  (k, result)</span></div><div class="ex"><div class="title">مثال خیلی ساده — شمارش کلمه</div><div class="step">دو جمله داریم: «big data» و «big data systems»</div><div class="calc">Map از جمله 1:  (big,1)  (data,1)
+Map از جمله 2:  (big,1)  (data,1)  (systems,1)
 
-<div class="box keep"><div class="lbl">شکل کلی</div>
-<pre class="f">(k, v1), (k, v2), ...  →  (k, [v1, v2, ..., vn])
-(k, [v1, ..., vn])     →  (k, v')</pre></div>
+بعد از Shuffle:
+  big → [1, 1]
+  data → [1, 1]
+  systems → [1]
 
-<h3>Combiner</h3>
-<p>اگر Reduce جابجایی‌پذیر و انجمنی باشد، بخشی از Reduce روی همان نود Map انجام می‌شود تا ترافیک شبکه کم شود.</p>
-<div class="box keep"><div class="lbl">مثال Word Count</div>
-<pre class="f">بدون Combiner:  چند بار (w, 1)
-با Combiner:      (w, n_i)  و در Reduce جمع نهایی</pre></div>
-
-<h3>مدیریت خرابی</h3>
+Reduce (جمع):
+  big = 2
+  data = 2
+  systems = 1</div><div class="ans">پاسخ نهایی: big=2 ، data=2 ، systems=1</div></div>
+<p><b>Combiner:</b> اگر عمل Reduce جابجایی‌پذیر و انجمنی باشد (مثل جمع)، می‌توان قبل از شبکه یک Reduce محلی زد تا ترافیک کم شود.</p>
 <table>
-<tr><th>خرابی</th><th>اقدام</th></tr>
-<tr><td>Master</td><td>معمولاً کل Job باید از نو شروع شود</td></tr>
-<tr><td>Map Worker</td><td>Map Taskها دوباره روی نود سالم اجرا می‌شوند</td></tr>
-<tr><td>Reduce Worker</td><td>Reduce Task دوباره اجرا می‌شود</td></tr>
+<tr><th>اگر این خراب شود</th><th>چه کار می‌کنند؟</th></tr>
+<tr><td>Master</td><td>معمولاً کل Job از نو شروع می‌شود</td></tr>
+<tr><td>Map Worker</td><td>همان Mapها روی نود سالم دوباره اجرا می‌شوند</td></tr>
+<tr><td>Reduce Worker</td><td>Reduce دوباره اجرا می‌شود</td></tr>
 </table>
-
-<p><b>Workflow Systems:</b> توسعه MR از دو مرحله ساده به DAG از توابع (Clustera ، Hyracks).</p>
-<p><b>Recursive MR:</b> PageRank و Transitive Closure با تکرار Job تا همگرایی.</p>
-<div class="box keep"><div class="lbl">PageRank iteration</div>
-<pre class="f">v^(t+1) = M × v^(t)</pre></div>
-</div>
-
-<!-- ===================== §4 ===================== -->
-<div class="sec">
-<h2>§۴ — جبر رابطه‌ای با MapReduce</h2>
+<p><b>Workflow Systems:</b> به‌جای فقط Map→Reduce، یک گراف DAG از توابع (Clustera، Hyracks).</p>
+<p><b>Pregel:</b> سیستم محاسبات گرافی با SuperStep و Checkpoint برای تحمل خرابی در الگوریتم‌های بازگشتی.</p>
+<p><b>PageRank تکراری:</b></p>
+<div class="eq"><span class="line">v⁽ᵗ⁺¹⁾ = M × v⁽ᵗ⁾   تا وقتی تغییر خیلی کم شود</span></div>
+<h2>بخش 4 — جبر رابطه‌ای با MapReduce <span class="mark">[S4]</span></h2>
 <table>
-<tr><th>عملیات</th><th>Map</th><th>Reduce</th></tr>
-<tr><td>Selection</td><td>اگر شرط برقرار بود: (t,t)</td><td>عبور همان زوج</td></tr>
-<tr><td>Projection</td><td>(t',t') با صفات انتخاب‌شده</td><td>حذف تکراری‌ها</td></tr>
-<tr><td>Union</td><td>(t,t) از R و S</td><td>یک‌بار خروجی</td></tr>
-<tr><td>Intersection</td><td>(t,t)</td><td>فقط اگر دو مقدار باشد</td></tr>
-<tr><td>Difference R−S</td><td>از R: (t,R) ؛ از S: (t,S)</td><td>فقط اگر فقط R آمده باشد</td></tr>
-<tr><td>Natural Join</td><td>کلید = صفت مشترک B</td><td>ترکیب همه جفت‌های R و S</td></tr>
-<tr><td>Grouping + Agg</td><td>کلید = صفات گروه</td><td>SUM / COUNT / AVG / MIN / MAX</td></tr>
+<tr><th>عملیات</th><th>ایده ساده</th></tr>
+<tr><td>Selection</td><td>فقط تاپل‌هایی که شرط دارند را نگه دار</td></tr>
+<tr><td>Projection</td><td>بعضی ستون‌ها را بردار؛ تکراری‌ها را در Reduce حذف کن</td></tr>
+<tr><td>Union</td><td>همه را بفرست؛ تکراری یکی شود</td></tr>
+<tr><td>Intersection</td><td>فقط چیزی که در هر دو آمده</td></tr>
+<tr><td>Difference R−S</td><td>چیزی که فقط در R است</td></tr>
+<tr><td>Join</td><td>کلید = ستون مشترک؛ دو طرف را به هم بچسبان</td></tr>
+<tr><td>Group + Aggregation</td><td>کلید = گروه؛ Reduce = SUM/COUNT/AVG</td></tr>
 </table>
+<div class="ex"><div class="title">مثال Join برای مبتدی</div><div class="step">جدول R: (علی، تهران) و (مینا، اصفهان)</div><div class="step">جدول S: (تهران، ایران) و (اصفهان، ایران)</div><div class="step">می‌خواهیم روی «شهر» Join کنیم:</div><div class="calc">Map: کلید = شهر
+  تهران → از R: علی   و از S: ایران
+  اصفهان → از R: مینا و از S: ایران
 
-<div class="box keep"><div class="lbl">Join ساده R(A,B) ⋈ S(B,C)</div>
-<pre class="f">Map from R:  emit( b , (R, a) )
-Map from S:  emit( b , (S, c) )
-Reduce:      for each b, combine all a with all c → (a, b, c)</pre></div>
-</div>
+Reduce تهران:  (علی، تهران، ایران)
+Reduce اصفهان: (مینا، اصفهان، ایران)</div><div class="ans">پاسخ نهایی: (علی،تهران،ایران) و (مینا،اصفهان،ایران)</div></div>
+<p><b>Multi-way Join:</b> Join همزمان چند جدول. هزینه انتقال داده مهم است؛ Replication Rate نشان می‌دهد هر ورودی چند بار کپی می‌شود.</p>
 
-<!-- ===================== §5 ===================== -->
-<div class="sec">
-<h2>§۵ — ضرب ماتریس با MapReduce</h2>
-
-<h3>۵.۱ ماتریس × بردار (سوال امتحانی)</h3>
-<div class="box keep"><div class="lbl">هدف و الگوریتم</div>
-<pre class="f">U = M × V
-u_i = Σ_j ( m_ij × v_j )
-
-Map:     emit( i , m_ij × v_j )   for each m_ij
-Reduce:  u_i = sum of values      for each i</pre></div>
-
-<div class="box keep"><div class="lbl">مثال حل‌شده</div>
-<pre class="f">M = | 1  0  5 |      V = | 2 |
-    | 7  3  0 |          | 4 |
-    | 1  3  5 |          | 6 |
-
-Map row1: (1,2) , (1,0) , (1,30)
-Map row2: (2,14), (2,12), (2,0)
-Map row3: (3,2) , (3,12), (3,30)
-
-Reduce:
-u1 = 2+0+30 = 32
+<h2>بخش 5 — ضرب ماتریس با MapReduce <span class="mark">[S5]</span></h2>
+<p>هدف ماتریس×بردار: برای هر سطر ماتریس یک عدد بساز = ضرب داخلی آن سطر در بردار.</p>
+<div class="eq"><span class="line">uᵢ = mᵢ₁·v₁ + mᵢ₂·v₂ + … + mᵢₙ·vₙ</span><span class="line">Map:    (i , mᵢⱼ × vⱼ)</span><span class="line">Reduce: برای هر i همه مقدارها را جمع کن</span></div><div class="ex"><div class="title">مثال کامل — انگار اولین بار می‌بینی</div><div class="step">ماتریس و بردار:</div><div class="calc">M =  1  0  5      V =  2
+     7  3  0           4
+     1  3  5           6</div><div class="step"><b>گام Map:</b> هر خانه ماتریس را در عنصر متناظر بردار ضرب کن. کلید = شماره سطر.</div><div class="calc">سطر 1: (1, 1×2=2) ، (1, 0×4=0) ، (1, 5×6=30)
+سطر 2: (2, 7×2=14)، (2, 3×4=12)، (2, 0×6=0)
+سطر 3: (3, 1×2=2) ، (3, 3×4=12)، (3, 5×6=30)</div><div class="step"><b>گام Shuffle:</b> مقدارهای هر سطر را کنار هم بگذار.</div><div class="calc">کلید 1 → [2, 0, 30]
+کلید 2 → [14, 12, 0]
+کلید 3 → [2, 12, 30]</div><div class="step"><b>گام Reduce:</b> جمع کن.</div><div class="calc">u1 = 2+0+30 = 32
 u2 = 14+12+0 = 26
-u3 = 2+12+30 = 44
+u3 = 2+12+30 = 44</div><div class="ans">پاسخ نهایی: U = [32, 26, 44]</div></div>
+<h3>ماتریس × ماتریس (دو Job)</h3>
+<div class="eq"><span class="line">pᵢₖ = Σⱼ (mᵢⱼ × nⱼₖ)</span></div>
+<p>Job1: روی j جوین کن و ضرب‌های جزئی بساز. Job2: برای هر (i,k) جمع بزن.</p>
+<div class="ex"><div class="title">چک یک خانه</div><div class="calc">خانه (1,1) از P: 1×2 + 0×4 + 5×6 = 2+0+30 = 32</div></div>
+<h2>بخش 6 — Shingle ، MinHash ، LSH <span class="mark">[S6]</span></h2><div class="eq"><span class="line">Document → Shingles → MinHash Signature → LSH → Candidates → Exact check</span></div>
+<h3>Shingle چیست؟</h3>
+<p>یک پنجره به طول k روی متن می‌گذاری و هر بار یک تکه برمی‌داری.</p>
+<div class="ex"><div class="title">مثال</div><div class="step">متن: abcab و k = 2</div><div class="calc">تکه‌ها: ab ، bc ، ca ، ab
+مجموعه بدون تکرار: {ab, bc, ca}</div></div>
+<h3>Jaccard</h3>
+<div class="eq"><span class="line">J(A,B) = |A ∩ B| / |A ∪ B|</span></div><div class="ex"><div class="title">مثال با میوه</div><div class="step">A = {سیب، پرتقال، موز} و B = {موز، انگور}</div><div class="calc">اشتراک = {موز}                 → 1
+اجتماع  = {سیب،پرتقال،موز،انگور} → 4
+J = 1/4 = 0.25
+فاصله = 1 - 0.25 = 0.75</div><div class="ans">پاسخ نهایی: J = 0.25</div></div>
+<h3>MinHash</h3>
+<p>عناصر را تصادفی مرتب کن. برای هر مجموعه، <b>اولین</b> عنصری که در آن ترتیب می‌بینی را به‌عنوان hash بردار.</p>
+<div class="eq"><span class="line">Pr[ هش دو مجموعه برابر شود ] = Jaccard همان دو مجموعه</span></div><div class="ex"><div class="title">مثال</div><div class="step">A = {1,3,4} و B = {2,3,4,5}</div><div class="calc">Jaccard واقعی = 2/5 = 0.4</div><div class="step">یک ترتیب تصادفی فرضی: 3 ، 1 ، 5 ، 2 ، 4</div><div class="calc">اولین عنصر A در این ترتیب = 3
+اولین عنصر B در این ترتیب = 3
+پس hashها برابر شدند</div><div class="step">اگر خیلی ترتیب تصادفی بگیری، نسبت دفعاتی که برابر می‌شوند حدود 0.4 می‌شود.</div></div>
+<h3>LSH</h3>
+<p>امضا را به چند نوار (band) تقسیم کن. اگر دو سند حتی در <b>یک نوار</b> کاملاً یکسان بودند، آن‌ها را candidate حساب کن و بعد دقیق چک کن.</p>
+<div class="eq"><span class="line">P = 1 − (1 − sʳ)ᵇ</span><div class="where"><b>که در آن:</b><div>s = شباهت واقعی</div><div>r = تعداد سطر در هر band</div><div>b = تعداد bandها</div></div></div><div class="ex"><div class="title">مثال عددی</div><div class="step">b = 20 ، r = 5 ، s = 0.8</div><div class="calc">s^r = 0.8^5 ≈ 0.328
+(1 - 0.328)^20 = 0.672^20 ≈ 0.00035
+P = 1 - 0.00035 ≈ 0.99965</div><div class="step">یعنی حدود 99.97٪ احتمال دارد جفت واقعاً مشابه را پیدا کنیم.</div><div class="ans">پاسخ نهایی: P ≈ 0.99965</div></div>
+<p><b>PCY:</b> در گذر اول علاوه بر شمارش اقلام، جفت‌ها را به bucket هش کن. در گذر دوم فقط جفتی را بشمار که هر دو قلم frequent باشند و bucketشان هم frequent باشد.</p>
 
-U = [32, 26, 44]^T</pre></div>
+<h2>بخش 7 — فاصله‌ها و تشابه تاپل‌ها <span class="mark">[S7]</span></h2>
+<p><b>چهار شرط Metric:</b> نامنفی، صفر فقط وقتی دو شیء یکی باشند، تقارن، نامساوی مثلثی.</p>
+<div class="eq"><span class="line">L₂ (اقلیدسی) = √( (x₁−y₁)² + (x₂−y₂)² + … )</span><span class="line">L₁ (منهتن)   = |x₁−y₁| + |x₂−y₂| + …</span><span class="line">L∞           = بزرگ‌ترین |xᵢ − yᵢ|</span></div><div class="ex"><div class="title">مثال روی یک جفت نقطه</div><div class="step">X = (1, 2) و Y = (4, 6)</div><div class="calc">L2 = √( (1-4)² + (2-6)² ) = √(9+16) = √25 = 5
+L1 = |1-4| + |2-6| = 3 + 4 = 7
+L∞ = max(3, 4) = 4</div></div><div class="eq"><span class="line">برای صفات اسمی:  d = (p − m) / p</span><div class="where"><b>که در آن:</b><div>p = تعداد کل صفات</div><div>m = تعداد صفاتی که مقدارشان یکی است</div></div></div><div class="ex"><div class="title">مثال اسمی</div><div class="step">شخص1: (مرد، تهران، لیسانس)</div><div class="step">شخص2: (زن، تهران، لیسانس)</div><div class="calc">p = 3
+m = 2   (شهر و مدرک یکسان‌اند)
+d = (3-2)/3 = 1/3 ≈ 0.33</div><div class="ans">پاسخ نهایی: 1/3</div></div>
+<p><b>دودویی:</b> q = هر دو 1 &nbsp;|&nbsp; r = (0,1) &nbsp;|&nbsp; s = (1,0) &nbsp;|&nbsp; t = هر دو 0</p>
+<div class="eq"><span class="line">متقارن:   d = (r + s) / (q + r + s + t)</span><span class="line">نامتقارن: d = (r + s) / (q + r + s)     ← صفر-صفر مهم نیست</span><span class="line">Jaccard:  J = q / (q + r + s)</span></div>
+<p><b>Cosine</b> برای متن خوب است. <b>Hamming</b> = تعداد خانه‌های متفاوت. <b>Edit distance</b> = |X| + |Y| − 2×|LCS|.</p>
+<p><b>Data Matrix:</b> سطر = تاپل، ستون = صفت. <b>Dissimilarity Matrix:</b> فاصله بین تاپل‌ها؛ قطر اصلی صفر.</p>
 
-<h3>۵.۲ ماتریس × ماتریس (دو Job)</h3>
-<div class="box keep"><div class="lbl">الگوریتم</div>
-<pre class="f">P = M × N
-p_ik = Σ_j ( m_ij × n_jk )
-
-Job1 Map:    emit( j , [M, i, m_ij] )
-             emit( j , [N, k, n_jk] )
-Job1 Reduce: emit( (i,k) , m_ij × n_jk )
-
-Job2 Reduce: p_ik = sum of values for key (i,k)</pre></div>
-
-<div class="box keep"><div class="lbl">نتیجه مثال</div>
-<pre class="f">N = | 2  0 |      P = | 32  10 |
-    | 4  8 |          | 26  24 |
-    | 6  2 |          | 44  34 |</pre></div>
-</div>
-
-<!-- ===================== §6 ===================== -->
-<div class="sec">
-<h2>§۶ — Finding Similar Items</h2>
-
-<div class="box keep"><div class="lbl">Pipeline</div>
-<pre class="f">Document → Shingling → Sets → MinHash → Signatures → LSH → Candidates → Exact check</pre></div>
-
-<h3>۶.۱ Shingle</h3>
-<p><b>تعریف:</b> k-shingle یعنی دنباله k توکن پشت‌سرهم در سند.</p>
-<div class="box keep"><div class="lbl">مثال</div>
-<pre class="f">D = abcab ,  k = 2
-S(D) = {ab, bc, ca}</pre></div>
-<ul>
-<li>bag-of-words ترتیب را از دست می‌دهد؛ shingle تا حدی ترتیب را نگه می‌دارد.</li>
-<li>اسناد کوتاه ≈ k=5 ؛ اسناد بلند ≈ k=10</li>
-</ul>
-
-<h3>۶.۲ Jaccard</h3>
-<div class="box keep"><div class="lbl">فرمول و مثال</div>
-<pre class="f">J(A,B) = |A ∩ B| / |A ∪ B|
-d_J    = 1 − J(A,B)
-
-A = {a,b,c,d} , B = {b,c,e}
-|A ∩ B| = 2 , |A ∪ B| = 5
-J = 2/5 = 0.4 ,  d = 0.6</pre></div>
-
-<h3>۶.۳ MinHash</h3>
-<p><b>تعریف:</b> تبدیل مجموعه بزرگ به امضای کوتاه طوری که تشابه تقریباً حفظ شود.</p>
-<p>ایده: permutation تصادفی π ؛ hπ(C) = اولین عنصر C در ترتیب π.</p>
-<div class="box keep"><div class="lbl">خاصیت طلایی و signature</div>
-<pre class="f">Pr[ hπ(C1) = hπ(C2) ] = J(C1, C2)
-
-sig(C) = [h1(C), h2(C), ..., hK(C)]
-estimated similarity = (# equal rows) / K
-
-h(a,b)(x) = ((a×x + b) mod p) mod N
-if row has 1:  sig[i] = min(sig[i], hi(row))</pre></div>
-
-<h3>۶.۴ LSH</h3>
-<p>ماتریس signature با n سطر را به b باند تقسیم کن؛ هر باند r سطر دارد (n = b×r). اگر دو ستون در حداقل یک باند برابر باشند → candidate.</p>
-<div class="box keep"><div class="lbl">فرمول و مثال</div>
-<pre class="f">P(candidate) = 1 − (1 − s^r)^b
-threshold    ≈ (1/b)^(1/r)
-
-b=20 , r=5 , s=0.8 → P ≈ 0.99965
-b=20 , r=5 , s=0.3 → P ≈ 0.047
-
-r↑ → FP↓ , FN↑
-b↑ → FN↓ , FP↑</pre></div>
-</div>
-
-<!-- ===================== §7 ===================== -->
-<div class="sec">
-<h2>§۷ — سنجه‌های فاصله و تشابه تاپل‌ها</h2>
-
-<h3>اصول Metric</h3>
-<ol>
-<li>d(x,y) ≥ 0</li>
-<li>d(x,y) = 0 اگر و فقط اگر x = y</li>
-<li>d(x,y) = d(y,x)</li>
-<li>d(x,y) ≤ d(x,z) + d(z,y)</li>
-</ol>
-
-<div class="box keep"><div class="lbl">فرمول فاصله‌ها و مثال</div>
-<pre class="f">Euclidean:  sqrt( Σ (xi−yi)^2 )
-Manhattan:  Σ |xi−yi|
-Minkowski:  ( Σ |xi−yi|^r )^(1/r)
-L∞:         max |xi−yi|
-Cosine:     (x·y) / (||x|| ||y||)
-Hamming:    # differing positions
-Edit:       |X| + |Y| − 2×|LCS|
-
-Example Euclidean:
-x=(1,2), y=(4,6)
-d = sqrt(9+16) = 5
-
-Example Hamming:
-X=10101 , Y=11110 → d = 3</pre></div>
-
-<h3>ماتریس داده و عدم‌تشابه</h3>
-<ul>
-<li><b>Data Matrix:</b> سطر = تاپل ، ستون = صفت</li>
-<li><b>Dissimilarity Matrix:</b> فاصله بین تاپل‌ها؛ قطر = 0</li>
-</ul>
-
-<div class="box keep"><div class="lbl">بر اساس نوع صفت</div>
-<pre class="f">Nominal:        d = (p − m) / p
-Sym. binary:    d = (r+s) / (q+r+s+t)
-Asym. binary:   d = (r+s) / (q+r+s)
-Jaccard binary: J = q / (q+r+s)
-
-q=both 1, r=(0,1), s=(1,0), t=both 0
-
-Example nominal:
-x=(قرمز,M,تهران,مجرد)
-y=(قرمز,F,تهران,متاهل)
-m=2, p=4 → d=(4−2)/4 = 0.5</pre></div>
-</div>
-
-<!-- ===================== §8 ===================== -->
-<div class="sec">
-<h2>§۸ — Frequent Itemsets ، Apriori ، Closed ، Maximal</h2>
-
-<div class="box keep"><div class="lbl">تعاریف</div>
-<pre class="f">support(X) = fraction of transactions containing X
-Frequent:  support(X) ≥ minsup
-
-support(A ⇒ B)    = support(A ∪ B)
-confidence(A ⇒ B) = support(A ∪ B) / support(A)</pre></div>
-
+<h2>بخش 8 — Apriori ، Closed ، Maximal <span class="mark">[S8]</span></h2><div class="eq"><span class="line">support(X) = (تعداد تراکنش شامل X) / (کل تراکنش‌ها)</span><span class="line">support(A ⇒ B) = support(A ∪ B)</span><span class="line">confidence(A ⇒ B) = support(A ∪ B) / support(A)</span><span class="line">M ⊆ C ⊆ F</span></div><div class="ex"><div class="title">مثال قانون انجمنی</div><div class="step">از 100 سبد خرید: نان در 40 سبد، نان+شیر در 30 سبد.</div><div class="calc">قانون: نان ⇒ شیر
+support = 30/100 = 0.3
+confidence = 30/40 = 0.75 = 75%</div><div class="step">یعنی 75٪ کسانی که نان گرفته‌اند شیر هم گرفته‌اند.</div><div class="ans">پاسخ نهایی: conf = 75%</div></div>
 <table>
-<tr><th>نوع</th><th>تعریف</th></tr>
-<tr><td>Closed</td><td>هیچ ابرمجموعه‌ای با همان support ندارد</td></tr>
-<tr><td>Maximal</td><td>هیچ ابرمجموعه frequent ندارد</td></tr>
+<tr><th>نوع</th><th>معنی ساده</th></tr>
+<tr><td>Closed</td><td>اگر قلمی اضافه کنی، support دیگر همان عدد قبلی نمی‌ماند</td></tr>
+<tr><td>Maximal</td><td>اگر قلمی اضافه کنی، دیگر frequent نیست</td></tr>
 </table>
-<div class="box keep"><div class="lbl">رابطه طلایی</div>
-<pre class="f">M ⊆ C ⊆ F</pre></div>
+<div class="ex"><div class="title">مثال Closed و Maximal</div><div class="step">تراکنش‌ها: {A,B,C} ، {A,B} ، {A,B,C} ، {A,C} و حداقل شمارش = 2</div><div class="calc">A=4 ، B=3 ، C=3
+AB=3 ، AC=3 ، BC=2
+ABC=2
 
-<p><b>اصل Apriori:</b> اگر itemset پرتکرار باشد، همه زیرمجموعه‌هایش هم پرتکرارند.</p>
-<ol>
-<li>Pass1: شمارش 1-itemsetها → L1</li>
-<li>از L(k−1) کاندیدهای Ck بساز</li>
-<li>با اصل Apriori هرس کن</li>
-<li>support را بشمار → Lk</li>
-<li>تکرار تا Lk تهی شود</li>
-</ol>
+Closedها: A ، AB ، AC ، ABC
+(B closed نیست چون AB همان support=3 را دارد)
 
-<p><b>PCY:</b> در Pass1 جفت‌ها را hash به bucket کن. در Pass2 جفت فقط وقتی کاندید است که هر دو item frequent باشند و bucket هم frequent باشد.</p>
-<p><b>CHARM:</b> استخراج Closed با tidset intersection.</p>
-</div>
+Maximal فقط: ABC</div></div>
+<p><b>اصل Apriori:</b> اگر مجموعه‌ای frequent باشد، همه زیرمجموعه‌هایش هم frequentاند. پس کاندید بزرگ را فقط از frequentهای کوچک می‌سازیم.</p>
+<p><b>CHARM:</b> الگوریتم استخراج Closed با اشتراک tidsetها.</p>
 
-<!-- ===================== §9 ===================== -->
-<div class="sec">
-<h2>§۹ — خوشه‌بندی Clustering</h2>
+<h2>بخش 9 — خوشه‌بندی <span class="mark">[S9]</span></h2>
+<p><b>هدف:</b> اعضای یک خوشه به هم نزدیک؛ خوشه‌های مختلف از هم دور. یادگیری بدون سرپرست (برخلاف طبقه‌بندی).</p>
+<p>انواع: Partitioning (K-Means، K-Medoids، PAM، CLARA، CLARANS) · Hierarchical (AGNES، DIANA) ·
+Density (DBSCAN، OPTICS، DENCLUE) · Grid (STING، CLIQUE)</p>
+<div class="ex"><div class="title">مثال K-Means — فقط یک تکرار</div><div class="step">نقاط: A(1,1) ، B(1,2) ، C(4,4) ، D(5,4)</div><div class="step">مراکز اولیه: μ1 = A(1,1) و μ2 = C(4,4)</div><div class="step"><b>تخصیص:</b> هر نقطه به نزدیک‌ترین مرکز می‌رود.</div><div class="calc">A و B نزدیک μ1 هستند → C1 = {A, B}
+C و D نزدیک μ2 هستند → C2 = {C, D}</div><div class="step"><b>به‌روزرسانی مرکز:</b> میانگین بگیر.</div><div class="calc">μ1 = ( (1+1)/2 , (1+2)/2 ) = (1 , 1.5)
+μ2 = ( (4+5)/2 , (4+4)/2 ) = (4.5 , 4)</div><div class="ans">پاسخ نهایی: مراکز جدید: (1, 1.5) و (4.5, 4)</div></div>
+<p><b>Linkage:</b> Single = کمینه فاصله بین دو خوشه · Complete = بیشینه · Average = میانگین · Centroid = فاصله مراکز.</p>
+<p><b>K-Medoids / PAM:</b> نماینده خوشه یک نقطه واقعی است (مقاوم‌تر به پرت). CLARA روی نمونه کار می‌کند؛ CLARANS جستجوی تصادفی می‌کند.</p>
+<div class="eq"><span class="line">DBSCAN: اگر در شعاع Eps حداقل MinPts نقطه باشد → Core Point</span><span class="line">Border = کنار Core است ولی خودش Core نیست</span><span class="line">Noise = هیچ‌کدام</span></div><div class="eq"><span class="line">BFR (داده بزرگ اقلیدسی):</span><span class="line">centroidᵢ = SUMᵢ / N</span><span class="line">varianceᵢ = SUMSQᵢ/N − (SUMᵢ/N)²</span></div>
+<p><b>CURE:</b> چند نقطه نماینده برای خوشه‌های غیرکروی. <b>OPTICS:</b> وقتی چگالی خوشه‌ها فرق می‌کند، بهتر از DBSCAN است.</p>
 
-<p><b>هدف:</b> فاصله درون‌خوشه‌ای کمینه، فاصله بین‌خوشه‌ای بیشینه. بدون سرپرست است.</p>
-
-<ul>
-<li>Partitioning: K-Means ، K-Medoids ، PAM ، CLARA ، CLARANS</li>
-<li>Hierarchical: AGNES ، DIANA ، BIRCH ، CURE</li>
-<li>Density-based: DBSCAN ، OPTICS ، DENCLUE</li>
-<li>Grid-based: STING ، CLIQUE</li>
-</ul>
-
-<h3>K-Means</h3>
-<ol>
-<li>انتخاب k مرکز اولیه</li>
-<li>تخصیص هر نقطه به نزدیک‌ترین مرکز</li>
-<li>به‌روزرسانی مراکز با میانگین</li>
-<li>تکرار تا ثبات</li>
-</ol>
-<p>ضعف‌ها: نیاز به k ، حساس به init و نویز ، خوشه تقریباً کروی ، بهینه محلی</p>
-
-<h3>K-Medoids / PAM / CLARA / CLARANS</h3>
-<ul>
-<li>Medoid = شیء واقعی داده (مقاوم‌تر به پرت)</li>
-<li>PAM: تعویض medoid اگر هزینه کم شود</li>
-<li>CLARA: PAM روی نمونه‌های تصادفی</li>
-<li>CLARANS: جستجوی تصادفی همسایه‌ها</li>
-</ul>
-
+<h2>بخش 10 — حل کامل نمونه سوالات استاد <span class="mark">[S10]</span></h2>
+<div class="note">امتحان نمونه: ۹۰ دقیقه — ۱۰ نمره توصیفی</div>
+<h3>سوال 1 — تعاریف</h3>
+<p><b>الف) Min-hashing:</b> از مجموعه بزرگ امضای کوتاه می‌سازیم طوری که احتمال برابر شدن hash دو مجموعه برابر Jaccard باشد.</p>
+<div class="eq"><span class="line">Pr[ h(C₁) = h(C₂) ] = J(C₁, C₂)</span></div>
+<p><b>ب) Collaborative Filtering:</b> توصیه‌گر مبتنی بر شباهت کاربران یا آیتم‌ها (مثل Netflix/Amazon).</p>
+<p><b>ج) Jaccard:</b></p>
+<div class="eq"><span class="line">J(A,B) = |A ∩ B| / |A ∪ B|</span></div>
+<p><b>د) Shingle:</b> دنباله k توکن متوالی در سند.</p>
+<h3>سوال 2 — Cluster در برابر RDBMS</h3>
+<p>RDBMS: مقیاس غالباً عمودی، ACID، داده ساخت‌یافته، در حجم خیلی بالا گران/کند.<br>
+Cluster: مقیاس افقی، commodity servers، replication و failover، انتقال کد به سمت داده.</p>
+<h3>سوال 3 — Matrix×Vector با MapReduce</h3>
+<div class="eq"><span class="line">Map: (i , mᵢⱼ × vⱼ)</span><span class="line">Reduce: uᵢ = مجموع همه مقدارهای کلید i</span></div>
+<p>مثال عددی کامل در بخش 5.</p>
+<h3>سوال 4 — TF-IDF</h3>
+<div class="ex"><div class="title">حل سوال استاد</div><div class="calc">TF = 10/100 = 0.1
+IDF = log2(1024/128) = log2(8) = 3
+TF-IDF = 0.1 × 3 = 0.3</div><div class="ans">پاسخ نهایی: 0.3</div></div>
+<h3>سوال 5 — Apriori با MST = 0.3</h3>
 <table>
-<tr><th>Linkage</th><th>فاصله دو خوشه</th></tr>
-<tr><td>Single</td><td>کمینه فاصله اعضا</td></tr>
-<tr><td>Complete</td><td>بیشینه فاصله اعضا</td></tr>
-<tr><td>Average</td><td>میانگین همه زوج‌ها</td></tr>
-<tr><td>Centroid</td><td>فاصله مراکز</td></tr>
+<tr><th>TID</th><th>اقلام</th><th>TID</th><th>اقلام</th></tr>
+<tr><td>1</td><td>a, b</td><td>5</td><td>a, b, c</td></tr>
+<tr><td>2</td><td>b, c</td><td>6</td><td>d, f</td></tr>
+<tr><td>3</td><td>a, b, c</td><td>7</td><td>c, d, e, f</td></tr>
+<tr><td>4</td><td>d, e, f</td><td>8</td><td>a, b, c, d, e</td></tr>
 </table>
-
-<div class="box keep"><div class="lbl">DBSCAN / BFR / CURE</div>
-<pre class="f">DBSCAN: Eps , MinPts
-  Core / Border / Noise
-
-BFR (large Euclidean):
-  N , SUM , SUMSQ
-  DS / CS / RS
-
-CURE: several representative points per cluster
-      (good for non-spherical shapes)</pre></div>
-
-<div class="box keep"><div class="lbl">مثال یک تکرار K-Means</div>
-<pre class="f">Points: A(1,1), B(1,2), C(4,4), D(5,4)
-Init:   μ1=A(1,1) , μ2=C(4,4)
-
-Assign: C1={A,B} , C2={C,D}
-Update: μ1=(1, 1.5) , μ2=(4.5, 4)</pre></div>
-</div>
-
-<!-- ===================== §10 ===================== -->
-<div class="sec">
-<h2>§۱۰ — حل کامل نمونه سوالات استاد</h2>
-<div class="note">امتحان نمونه: داده‌های حجیم — ۹۰ دقیقه — ۱۰ نمره توصیفی</div>
-
-<h3>سوال ۱ (۲ نمره) — تعریف مفاهیم</h3>
-
-<p><b>الف) Min-hashing:</b> ساخت امضای کوتاه از مجموعه‌های بزرگ طوری که احتمال برابر شدن hash دو مجموعه برابر Jaccard باشد.</p>
-<div class="box keep"><pre class="f">Pr[ h(C1) = h(C2) ] = J(C1, C2)</pre></div>
-
-<p><b>ب) Collaborative Filtering:</b> روش توصیه‌گر مبتنی بر مشارکت؛ با یافتن کاربران/آیتم‌های مشابه، آیتم مناسب پیشنهاد می‌شود (مثل Netflix و Amazon).</p>
-
-<p><b>ج) Jaccard Similarity:</b></p>
-<div class="box keep"><pre class="f">J(A,B) = |A ∩ B| / |A ∪ B|</pre></div>
-
-<p><b>د) Shingle:</b> دنباله k توکن متوالی در سند؛ برای مقایسه near-duplicate استفاده می‌شود.</p>
-
-<h3>سوال ۲ (۲ نمره) — Cluster در برابر RDBMS</h3>
-<p><b>RDBMS سنتی:</b> مقیاس غالباً عمودی و گران، داده ساخت‌یافته، ACID قوی، سرورهای قدرتمند؛ در حجم خیلی بالا محدود است.</p>
-<p><b>Cluster Computing:</b> مقیاس افقی با commodity servers، replication و failover، high availability، load balancing، تحمل خرابی نرم‌افزاری ارزان‌تر، انتقال کد به سمت داده (Hadoop/MapReduce).</p>
-
-<h3>سوال ۳ (۲ نمره) — ضرب ماتریس×بردار با MapReduce</h3>
-<div class="box keep"><pre class="f">U = M × V
-
-1) Map:    emit(i, m_ij × v_j) for each m_ij
-2) Shuffle: group by i
-3) Reduce: u_i = Σ values for key i</pre></div>
-<p>اگر V در حافظه جا شود همه Mapperها آن را دارند. مثال عددی در §۵.</p>
-
-<h3>سوال ۴ (۲ نمره) — TF-IDF</h3>
-<div class="box keep"><pre class="f">N=1024 , n(w)=128 , f(w,j)=10 , max=100
-
-TF     = 10/100 = 0.1
-IDF    = log2(1024/128) = log2(8) = 3
-TF-IDF = 0.1 × 3 = 0.3</pre></div>
-<p><b>پاسخ نهایی: 0.3</b></p>
-
-<h3>سوال ۵ (۲ نمره) — Apriori با MST = 0.3</h3>
-<table>
-<tr><th>TID</th><th>اقلام</th></tr>
-<tr><td>1</td><td>a, b</td></tr>
-<tr><td>2</td><td>b, c</td></tr>
-<tr><td>3</td><td>a, b, c</td></tr>
-<tr><td>4</td><td>d, e, f</td></tr>
-<tr><td>5</td><td>a, b, c</td></tr>
-<tr><td>6</td><td>d, f</td></tr>
-<tr><td>7</td><td>c, d, e, f</td></tr>
-<tr><td>8</td><td>a, b, c, d, e</td></tr>
-</table>
-
-<div class="box keep"><div class="lbl">آستانه و Passها</div>
-<pre class="f">minsup = 0.3 × 8 = 2.4  ⇒  need count ≥ 3
-(because 2/8 = 0.25 &lt; 0.3)
-
-Pass1 counts:
-a=4, b=5, c=5, d=4, e=3, f=3
-L1 = {a,b,c,d,e,f}
-
-Pass2 frequent pairs:
-ab=4, ac=3, bc=4, de=3, df=3
-L2 = {ab, ac, bc, de, df}
-(cd=2, ce=2, ef=2 are NOT frequent)
-
-Pass3:
-abc = 3  → frequent
-{def} not candidate (ef not in L2)
-L3 = {abc}
-
-Final:
-1-item: a,b,c,d,e,f
-2-item: ab,ac,bc,de,df
-3-item: abc</pre></div>
-</div>
-
+<div class="ex"><div class="title">حل قدم‌به‌قدم</div><div class="step">تعداد تراکنش = 8 و minsup = 0.3 → حداقل شمارش باید ≥ 3 باشد (چون 2/8 = 0.25 از 0.3 کمتر است).</div><div class="step"><b>Pass 1:</b></div><div class="calc">a=4, b=5, c=5, d=4, e=3, f=3
+همه ≥ 3 → L1 = {a,b,c,d,e,f}</div><div class="step"><b>Pass 2:</b></div><div class="calc">ab=4 ✓  ac=3 ✓  bc=4 ✓
+de=3 ✓  df=3 ✓
+cd=2 ✗  ce=2 ✗  ef=2 ✗
+L2 = {ab, ac, bc, de, df}</div><div class="step"><b>Pass 3:</b> فقط abc قابل ساخت است (ab و ac و bc همه frequentاند). def نه، چون ef frequent نیست.</div><div class="calc">abc در تراکنش‌های 3 و 5 و 8 → count=3 ✓
+L3 = {abc}</div><div class="step">Pass 4 کاندیدی ندارد → توقف.</div><div class="ans">پاسخ نهایی: L2={ab,ac,bc,de,df} و L3={abc}</div></div>
 <hr>
-<div class="note">
-<b>چک‌لیست ۳۰ ثانیه‌ای:</b>
-۱) تعریف یک‌خطی؟ &nbsp;
-۲) فرمول؟ &nbsp;
-۳) مثال عددی؟ &nbsp;
-۴) تفاوت با مفهوم نزدیک؟
-</div>
-
-</body>
-</html>
+<div class="note"><b>چک‌لیست ۳۰ ثانیه‌ای:</b> تعریف یک‌خطی؟ فرمول؟ مثال عددی؟ تفاوت با مفهوم نزدیک؟</div>
+<p class="small">
+موارد اضافه‌شده پس از مرور لکچرها: Hash/Index/دیسک، Bonferroni، Pregel، Multi-way Join، PCY، OPTICS/CURE/BFR.
+Data Streams و Online Advertising فقط در فهرست کلی overview بودند و اسلاید کامل در فایل‌های ارسالی نبود؛ تمرکز نمونه سوالات استاد روی Similar Items، MapReduce، TF-IDF، Cluster/RDBMS و Apriori است.
+</p>
+</body></html>
