@@ -1,0 +1,264 @@
+
+
+===== PAGE 1/5 =====
+CLOSED ITEMSET MINING AND NON-REDUNDANT
+ASSOCIATION RULE MINING
+Mohammed J. Zaki
+Computer Science Department
+Rensselaer Polytechnic Institute
+Troy NY 12180
+zaki@cs.rpi.edu
+SYNONYMS
+Frequent Concepts; Rule Bases
+DEFINITION
+Let I be a set of binary-valued attributes, called items. A set X ⊆I is called an itemset. A transaction
+database D is a multiset of itemsets, where each itemset, called a transaction, has a unique identiﬁer,
+called a tid. The support of an itemset X in a dataset D, denoted sup(X), is the fraction of transactions
+in D where X appears as a subset. X is said to be a frequent itemset in D if sup(X) ≥minsup, where
+minsup is a user deﬁned minimum support threshold. An (frequent) itemset is called closed if it has no
+(frequent) superset having the same support.
+An association rule is an expression A ⇒B, where A and B are itemsets, and A ∩B = ∅. The support
+of the rule is the joint probability of a transaction containing both A and B, given as sup(A ⇒B) =
+P(A ∧B) = sup(A ∪B). The conﬁdence of a rule is the conditional probability that a transaction
+contains B, given that it contains A, given as: conf(A ⇒B) = P(B|A) = P (A∧B)
+P (A)
+= sup(A∪B)
+sup(A) . A rule
+is frequent if the itemset A ∪B is frequent. A rule is conﬁdent if conf ≥minconf, where minconf is a
+user-speciﬁed minimum threshold. The aim of non-redundant association rule mining is to generate a
+rule basis, a small, non-redundant set of rules, from which all other association rules can be derived.
+HISTORICAL BACKGROUND
+The notion of closed itemsets has its origins in the elegant mathematical framework of Formal Concept Analysis
+(FCA) [3], where they are called concepts. The task of mining frequent closed itemsets was independently proposed
+in [11] and [7]. Approaches for non-redundant association rule mining were also independently proposed in [9]
+and [1]. These approaches rely heavily on the seminal work on rule bases in [5] and [6]. Eﬃcient algorithms for
+mining frequent closed itemsets include CHARM [10], CLOSET [8] and several new approaches described in the
+Frequent Itemset Mining Implementations workshops [4].
+SCIENTIFIC FUNDAMENTALS
+Let I = {i1, i2, · · · , im} be the set of items, and let T = {t1, t2, · · · , tn} be the set of tids, the transaction identiﬁers.
+Just as a subset of items is called an itemset, a subset of tids is called a tidset. Let t : 2I →2T be a function,
+deﬁned as follows:
+t(X) = {t ∈T | X ⊆i(t)}
+That is, t(X) is the set of transactions that contain all the items in the itemset X. Let i : 2T →2I be a function,
+
+
+===== PAGE 2/5 =====
+deﬁned as follows:
+i(Y ) = {i ∈I | ∀t ∈Y, t contains x}
+That is, i(T ) is the set of items that are contained in all the tids in the tidset Y . Formally, an itemset X is closed
+if i ◦t(X) = X, i.e., if X is a ﬁxed-point of the closure operator c = i ◦t. From the properties of the closure
+operator, one can derive that X is the maximal itemset that is contained in all the transactions t(X), which gives
+the simple deﬁnition of a closed itemset, namely, a closed itemset is one that has no superset that has the same
+support.
+Based on the discussion above, three main families of itemsets can be distinguished. Let F denote the set of all
+frequent itemsets, given as
+F = {X | X ⊆I and sup(X) ≥minsup}
+Let C denote the set of all closed frequent itemsets, given as
+C = {X | X ∈F and̸
+∃Y ⊃X with sup(X) = sup(Y )}
+Finally, let M denote the set of all maximal frequent itemsets, given as
+M = {X | X ∈F and̸
+∃Y ⊃X, such that Y ∈F}
+i(t)
+1
+ACTW
+2
+CDW
+3
+ACTW
+4
+ACDW
+5
+ACDTW
+6
+CDT
+Table 1: Example Transaction Dataset
+DW
+TW
+AW
+AT
+AC
+CD
+CT
+CW
+CDW
+ACW
+CTW
+ATW
+ACT
+ACTW
+CW
+ACW
+ACTW
+CDW
+CD
+CT
+(1345)
+(123456)
+(135)
+(1345)
+(2456)
+(135)
+(135)
+(135)
+(135)
+(135)
+(1345)
+(1345)
+(2456)
+(1356)
+(1356)
+(12345)
+(12345)
+(245)
+( 245)
+(123456)
+(2456)
+(1356)
+(1345)
+(12345)
+(245)
+(135)
+A
+D
+C
+T
+W
+C
+MAXIMAL ITEMSETS
+CLOSED ITEMSETS
+FREQUENT ITEMSETS
+Figure 1: Frequent, Closed Frequent and Maximal Frequent Itemsets
+The following relationship holds between these sets: M ⊆C ⊆F, which is illustrated in Figure 1, based on the
+example dataset shown in Table 1 and using minimum support minsup = 3. The equivalence classes of itemsets
+that have the same tidsets have been shown clearly; the largest itemset in each equivalence class is a closed
+itemset. The ﬁgure also shows that the maximal itemsets are a subset of the closed itemsets.
+2
+
+
+===== PAGE 3/5 =====
+Mining Closed Frequent Itemsets: CHARM [10] is an eﬃcient algorithm for mining closed itemsets. Deﬁne
+two itemsets X, Y of length k as belonging to the same preﬁx equivalence class, [P], if they share the k −1 length
+preﬁx P, i.e., X = Px and Y = Py, where x, y ∈I. More formally, [P] = {Pxi | xi ∈I}, is the class of all itemsets
+sharing P as a common preﬁx. In CHARM there is no distinct candidate generation and support counting phase.
+Rather, counting is simultaneous with candidate generation. For a given preﬁx class, one performs intersections of
+the tidsets of all pairs of itemsets in the class, and checks if the resulting tidsets have cardinality at least minsup.
+Each resulting frequent itemset generates a new class which will be expanded in the next step. That is, for a
+given class of itemsets with preﬁx P, [P] = {Px1, Px2, ..., Pxn}, one performs the intersection of Pxi with all
+Pxj with j > i to obtain a new class [Pxi] = [P ′] with elements P ′xj provided the itemset Pxixj is frequent.
+The computation progresses recursively until no more frequent itemsets are produced. The initial invocation
+is with the class of frequent single items (the class [∅]). All tidset intersections for pairs of class elements are
+computed. However in addition to checking for frequency, CHARM eliminates branches that cannot lead to closed
+sets, and grows closed itemsets using subset relationships among tidsets. There are four cases: if t(Xi) ⊂t(Xj)
+or if t(Xi) = t(Xj), then replace every occurrence of Xi with Xi ∪Xj, since whenever Xi occurs Xj also occurs,
+which implies that c(Xi) ⊆c(Xi ∪Xj). If t(Xi) ⊃t(Xj) then replace Xj for the same reason. Finally, further
+recursion is required if t(Xi)̸ = t(Xj). These four properties allow CHARM to eﬃciently prune the search tree
+(for additional details see [10]).
+{}
+D x 2456
+DT x 56
+DW x 245
+T x 1356
+A x 1345
+AW x 1345
+W x 12345
+C x 123456
+DA x 45
+DC x 2456
+DWC x 245
+WC x 12345
+AWC x 1345
+TA x 135
+TC x 1356
+TW x 135
+TWC x 135
+TAC x 135
+TAWC x 135
+Figure 2: CHARM: Mining Closed Frequent Itemsets
+Figure 2 shows how CHARM works on the example database shown in Table 1. First, CHARM sorts the items in
+increasing order of support, and initializes the root class as [∅] = {D × 2456, T × 1356, A × 1345, W × 12345, C ×
+123456}. The notation D × 2456 stands for the itemset D and its tidset t(D) = {2, 4, 5, 6}. CHARM ﬁrst
+processes the node D × 2456; it will be combined with the sibling elements. DT and DA are not frequent and
+are thus pruned. Looking at W, since t(D)̸ = t(W), W is inserted in the new equivalence class [D]. For C, since
+t(D) ⊂t(C), all occurrences of D are replaced with DC, which means that [D] is also changed to [DC], and the
+element DW to DWC. A recursive call with class [DC] is then made and since there is only a single itemset
+DWC, it is added to the set of closed itemsets C. When the call returns to D (i.e., DC) all elements in the class
+have been processed, so DC itself is added to C.
+When processing T , t(T )̸ = t(A), and thus CHARM inserts A in the new class [T ]. Next it ﬁnds that t(T )̸ = t(W)
+and updates [T ] = {A, W}. When it ﬁnds t(T ) ⊂t(C) it updates all occurrences of T with T C. The class [T ]
+becomes [T C] = {A, W}. CHARM then makes a recursive call to process [T C]. When combining T AC with
+T WC it ﬁnds t(T AC) = t(T WC), and thus replaces T AC with T ACW, deleting T WC at the same time. Since
+T ACW cannot be extended further, it is inserted in C. Finally, when it is done processing the branch T C, it too
+is added to C. Since t(A) ⊂t(W) ⊂t(C) no new recursion is made; the ﬁnal set of closed itemsets C consists of
+the uncrossed itemsets shown in Figure 2.
+3
+
+
+===== PAGE 4/5 =====
+Non-Redundant Association Rules: Given the set of closed frequent itemsets C, one can generate all non-
+redundant association rules. There are two main classes of rules: i) those that have 100% conﬁdence, and ii)
+those that have less than 100% conﬁdence [9]. Let X1 and X2 be closed frequent itemsets. The 100% conﬁdence
+rules are equivalent to those directed from X1 to X2, where X2 ⊆X1, i.e., from a superset to a subset (not
+necessarily proper subset). For example, the rule C ⇒W is equivalent to the rule between the closed itemsets
+c(W) ⇒c(C) ≡CW ⇒C. Its support is sup(CW) = 5/6, and its conﬁdence is sup(CW)
+sup(W) = 5/5 = 1, i.e., 100%.
+The less than 100% conﬁdence rules are equivalent to those from X1 to X2 where X1 ⊂X2, i.e., from a subset to
+a proper superset. For example, the rule W ⇒T is equivalent to the rule c(W) ⇒c(W ∪T ) ≡CW ⇒ACT W.
+Its support is sup(T W) = 3/6 = 0.5, and its conﬁdence is sup(T W)
+sup(W) = 3/5 = 0.6 or 60%. More details on how to
+generate these non-redundant rules appears in [9].
+KEY APPLICATIONS*
+Closed itemsets provide a loss-less representation of the set of all frequent itemsets; they allow one to determine
+not only the frequent sets but also their exact support. At the same time they can be orders of magnitude fewer.
+Likewise, the non-redundant rules provide a much smaller, and manageable, set of rules, from which all other
+rules can be derived. There are numerous applications of these methods, such as market basket analysis, web
+usage mining, gene expression pattern mining, and so on.
+FUTURE DIRECTIONS
+Closed itemset mining has inspired a lot of subsequent research in mining compressed representations or summaries
+of the set of frequent patterns; see [2] for a survey of these approaches. Mining compressed pattern bases remains
+an active area of study.
+EXPERIMENTAL RESULTS*
+A number of algorithms have been proposed to mine frequent closed itemsets, and to extract non-redundant rule
+bases. The Frequent Itemset Mining Implementations (FIMI) Repository contains links to many of the latest
+implementations for mining closed itemsets. A report on the comparison of these methods also appears in [4].
+Other implementations can be obtained from individual author’s websites.
+DATA SETS*
+The FIMI repository has a number of real and synthetic datasets used in various studies on closed itemset mining.
+URL TO CODE*
+The main FIMI website is at http://fimi.cs.helsinki.fi/, which is also mirrored at: http://www.cs.rpi.
+edu/~zaki/FIMI/
+CROSS REFERENCE*
+Data Mining, Association Rule Mining.
+RECOMMENDED READING
+Between 5 and 15 citations to important literature, e.g., in journals, conference proceedings, and
+websites.
+[1] Y. Bastide, N. Pasquier, R. Taouil, G. Stumme, and L. Lakhal. Mining minimal non-redundant association rules
+using frequent closed itemsets. In 1st International Conference on Computational Logic, July 2000.
+4
+
+
+===== PAGE 5/5 =====
+[2] T. Calders, C. Rigotti, and Jean-Francosis Boulicaut. A Survey on Condensed Representation for Frequent Sets. In
+J-F. Boulicaut, L. De Raedt, and H. Mannila, editors, Constraint-Based Mining and Inductive Databases, volume
+3848 of LNCS, pages 64–80. Springer Verlag, 2005.
+[3] B. Ganter and R. Wille. Formal Concept Analysis: Mathematical Foundations. Springer-Verlag, 1999.
+[4] B. Goethals and M.J. Zaki. Advances in frequent itemset mining implementations: report on FIMI’03. SIGKDD
+Explorations, 6(1):109–117, June 2003.
+[5] J. L. Guigues and V. Duquenne. Familles minimales d’implications informatives resultant d’un tableau de donnees
+binaires. Math. Sci. hum., 24(95):5–18, 1986.
+[6] M. Luxenburger. Implications partielles dans un contexte. Math. Inf. Sci. hum., 29(113):35–55, 1991.
+[7] N. Pasquier, Y. Bastide, R. Taouil, and L. Lakhal. Discovering frequent closed itemsets for association rules. In 7th
+International Conference on Database Theory, January 1999.
+[8] J. Pei, J. Han, and R. Mao. Closet: An eﬃcient algorithm for mining frequent closed itemsets. In 5th ACM SIGMOD
+Workshop on Data Mining and Knowledge Discovery, May 2000.
+[9] M. J. Zaki.
+Generating non-redundant association rules.
+In 6th ACM SIGKDD International Conference on
+Knowledge Discovery and Data Mining, pages 34–43, August 2000.
+[10] M. J. Zaki and C.-J. Hsiao. ChARM: An eﬃcient algorithm for closed itemset mining. In 2nd SIAM International
+Conference on Data Mining, pages 457–473, April 2002.
+[11] M. J. Zaki and M. Ogihara.
+Theoretical foundations of association rules.
+In 3rd ACM SIGMOD Workshop on
+Research Issues in Data Mining and Knowledge Discovery, June 1998.
+5

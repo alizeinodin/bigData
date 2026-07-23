@@ -1,0 +1,1222 @@
+
+
+===== PAGE 1/58 =====
+Mining of Massive Datasets
+Jure Leskovec, Anand Rajaraman, Jeff Ullman 
+Stanford University
+http://www.mmds.org 
+Note to other teachers and users of these slides: We would be delighted if you found this our 
+material useful in giving your own lectures. Feel free to use these slides verbatim, or to modify 
+them to fit your own needs. If you make use of a significant portion of these slides in your own 
+lecture, please include this message, or a link to our web site: http://www.mmds.org
+
+
+===== PAGE 2/58 =====
+High dim. 
+data
+Locality 
+sensitive 
+hashing
+Clustering
+Dimensional
+ity 
+reduction
+Graph 
+data
+PageRank, 
+SimRank
+Network 
+Analysis
+Spam 
+Detection
+Infinite 
+data
+Filtering 
+data 
+streams
+Web 
+advertising
+Queries on 
+streams
+Machine 
+learning
+SVM
+Decision 
+Trees
+Perceptron, 
+kNN
+Apps
+Recommen
+der systems
+Association 
+Rules
+Duplicate 
+document 
+detection
+J. Leskovec, A. Rajaraman, J. Ullman: Mining of Massive Datasets, http://www.mmds.org
+2
+
+
+===== PAGE 3/58 =====
+3
+J. Leskovec, A. Rajaraman, J. Ullman: Mining of Massive Datasets, http://www.mmds.org
+[Hays and Efros, SIGGRAPH 2007]
+
+
+===== PAGE 4/58 =====
+4
+J. Leskovec, A. Rajaraman, J. Ullman: Mining of Massive Datasets, http://www.mmds.org
+[Hays and Efros, SIGGRAPH 2007]
+
+
+===== PAGE 5/58 =====
+10 nearest neighbors from a collection of 20,000 images
+J. Leskovec, A. Rajaraman, J. Ullman: Mining of Massive Datasets, http://www.mmds.org
+5
+[Hays and Efros, SIGGRAPH 2007]
+
+
+===== PAGE 6/58 =====
+10 nearest neighbors from a collection of 2 million images
+J. Leskovec, A. Rajaraman, J. Ullman: Mining of Massive Datasets, http://www.mmds.org
+6
+[Hays and Efros, SIGGRAPH 2007]
+
+
+===== PAGE 7/58 =====
+Many problems can be expressed as 
+finding “similar” sets:
+Find near-neighbors in high-dimensional space
+Examples:
+Pages with similar words
+For duplicate detection, classification by topic
+Customers who purchased similar products
+Products with similar customer sets
+Images with similar features
+Users who visited similar websites
+J. Leskovec, A. Rajaraman, J. Ullman: Mining of Massive Datasets, http://www.mmds.org
+7
+
+
+===== PAGE 8/58 =====
+Given: High dimensional data points 𝒙𝟏, 𝒙𝟐, …
+For example: Image is a long vector of pixel colors
+1
+2
+1
+0
+2
+1
+0
+1
+0
+→[1 2 1 0 2 1 0 1 0]
+And some distance function 𝒅(𝒙𝟏, 𝒙𝟐)
+Which quantifies the “distance” between 𝒙𝟏and 𝒙𝟐
+Goal: Find all pairs of data points (𝒙𝒊, 𝒙𝒋) that are 
+within some distance threshold 𝒅𝒙𝒊, 𝒙𝒋≤𝒔
+Note: Naïve solution would take 𝑶𝑵𝟐
+where 𝑵is the number of data points
+MAGIC: This can be done in 𝑶𝑵!! How?
+J. Leskovec, A. Rajaraman, J. Ullman: Mining of Massive Datasets, http://www.mmds.org
+8
+
+
+===== PAGE 9/58 =====
+Last time: Finding frequent pairs
+J. Leskovec, A. Rajaraman, J. Ullman: Mining of Massive Datasets, http://www.mmds.org
+9
+Items 1…N
+Items 1…N
+Count of pair {i,j} 
+in the data
+Naïve solution:
+Single pass but requires 
+space quadratic in the 
+number of items
+Items 1…K
+Items 1…K
+Count of pair {i,j}
+in the data
+A-Priori:
+First pass: Find frequent singletons
+For a pair to be a frequent pair 
+candidate, its singletons have to be 
+frequent!
+Second pass:
+Count only candidate pairs!
+N … number of distinct items
+K … number of items with support s
+
+
+===== PAGE 10/58 =====
+Last time: Finding frequent pairs
+Further improvement: PCY
+Pass 1:
+Count exact frequency of each item:
+Take pairs of items {i,j}, hash them into B buckets and 
+count of the number of pairs that hashed to each bucket:
+J. Leskovec, A. Rajaraman, J. Ullman: Mining of Massive Datasets, http://www.mmds.org
+10
+Items 1…N
+Basket 1: {1,2,3}
+Pairs: {1,2} {1,3} {2,3}
+Buckets 1…B
+2                        1
+
+
+===== PAGE 11/58 =====
+Last time: Finding frequent pairs
+Further improvement: PCY
+Pass 1:
+Count exact frequency of each item:
+Take pairs of items {i,j}, hash them into B buckets and 
+count of the number of pairs that hashed to each bucket:
+Pass 2:
+For a pair {i,j} to be a candidate for 
+a frequent pair, its singletons {i}, {j} 
+have to be frequent and the pair 
+has to hash to a frequent bucket!
+J. Leskovec, A. Rajaraman, J. Ullman: Mining of Massive Datasets, http://www.mmds.org
+11
+Items 1…N
+Basket 1: {1,2,3}
+Pairs: {1,2} {1,3} {2,3}
+Basket 2: {1,2,4}
+Pairs: {1,2} {1,4} {2,4}
+Buckets 1…B
+3
+1         2
+
+
+===== PAGE 12/58 =====
+Last time: Finding frequent pairs
+Further improvement: PCY
+Pass 1:
+Count exact frequency of each item:
+Take pairs of items {i,j}, hash them into B buckets and 
+count of the number of pairs that hashed to each bucket:
+Pass 2:
+For a pair {i,j} to be a candidate for 
+a frequent pair, its singletons have 
+to be frequent and its  has to hash
+to a frequent bucket!
+J. Leskovec, A. Rajaraman, J. Ullman: Mining of Massive Datasets, http://www.mmds.org
+12
+Items 1…N
+Basket 1: {1,2,3}
+Pairs: {1,2} {1,3} {2,3}
+Basket 2: {1,2,4}
+Pairs: {1,2} {1,4} {2,4}
+Buckets 1…B
+3
+1         2
+Previous lecture: A-Priori
+Main idea: Candidates
+Instead of keeping a count of each pair, only keep a count  
+of candidate pairs!
+Today’s lecture: Find pairs of similar docs
+Main idea: Candidates
+-- Pass 1:Take documents and hash them to buckets such that 
+documents that are similar hash to the same bucket
+-- Pass 2: Only compare documents that are candidates 
+(i.e., they hashed to a same bucket)
+Benefits: Instead of O(N2) comparisons, we need O(N) 
+comparisons to find similar documents
+
+
+===== PAGE 13/58 =====
+
+
+===== PAGE 14/58 =====
+Goal: Find near-neighbors in high-dim. space
+We formally define “near neighbors” as 
+points that are a “small distance” apart
+For each application, we first need to define 
+what “distance” means
+Today: Jaccard distance/similarity
+The Jaccard similarity of two sets is the size of their 
+intersection divided by the size of their union:
+sim(C1, C2) = |C1C2|/|C1C2|
+Jaccard distance: d(C1, C2) = 1 - |C1C2|/|C1C2|
+14
+J. Leskovec, A. Rajaraman, J. Ullman: Mining of Massive Datasets, http://www.mmds.org
+3 in intersection
+8 in union
+Jaccard similarity= 3/8
+Jaccard distance = 5/8
+
+
+===== PAGE 15/58 =====
+Goal: Given a large number (𝑵in the millions or 
+billions) of documents, find “near duplicate” pairs
+Applications:
+Mirror websites, or approximate mirrors
+Don’t want to show both in search results
+Similar news articles at many news sites
+Cluster articles by “same story”
+Problems:
+Many small pieces of one document can appear 
+out of order in another
+Too many documents to compare all pairs
+Documents are so large or so many that they cannot 
+fit in main memory
+J. Leskovec, A. Rajaraman, J. Ullman: Mining of Massive Datasets, http://www.mmds.org
+15
+
+
+===== PAGE 16/58 =====
+1. Shingling: Convert documents to sets
+2. Min-Hashing: Convert large sets to short 
+signatures, while preserving similarity
+3.
+Locality-Sensitive Hashing: Focus on 
+pairs of signatures likely to be from 
+similar documents
+
+Candidate pairs!
+J. Leskovec, A. Rajaraman, J. Ullman: Mining of Massive Datasets, http://www.mmds.org
+16
+
+
+===== PAGE 17/58 =====
+17
+Docu-
+ment
+The set
+of strings
+of length k
+that appear
+in the doc-
+ument
+Signatures:
+short integer
+vectors that
+represent the
+sets, and
+reflect their
+similarity
+Locality-
+Sensitive
+Hashing
+Candidate
+pairs:
+those pairs
+of signatures
+that we need
+to test for
+similarity
+J. Leskovec, A. Rajaraman, J. Ullman: Mining of Massive Datasets, http://www.mmds.org
+
+
+===== PAGE 18/58 =====
+Step 1: Shingling: Convert documents to sets
+Docu-
+ment
+The set
+of strings
+of length k
+that appear
+in the doc-
+ument
+
+
+===== PAGE 19/58 =====
+Step 1: Shingling: Convert documents to sets
+Simple approaches:
+Document = set of words appearing in document
+Document = set of “important” words
+Don’t work well for this application. Why?
+Need to account for ordering of words!
+A different way: Shingles!
+J. Leskovec, A. Rajaraman, J. Ullman: Mining of Massive Datasets, http://www.mmds.org
+19
+
+
+===== PAGE 20/58 =====
+A k-shingle (or k-gram) for a document is a 
+sequence of k tokens that appears in the doc
+Tokens can be characters, words or something 
+else, depending on the application
+Assume tokens = characters for examples
+Example: k=2; document D1 = abcab
+Set of 2-shingles: S(D1) = {ab, bc, ca}
+Option: Shingles as a bag (multiset), count ab
+twice: S’(D1) = {ab, bc, ca, ab}
+J. Leskovec, A. Rajaraman, J. Ullman: Mining of Massive Datasets, http://www.mmds.org
+20
+
+
+===== PAGE 21/58 =====
+To compress long shingles, we can hash them 
+to (say) 4 bytes
+Represent a document by the set of hash 
+values of its k-shingles
+Idea: Two documents could (rarely) appear to have 
+shingles in common, when in fact only the hash-
+values were shared
+Example: k=2; document D1= abcab
+Set of 2-shingles: S(D1) = {ab, bc, ca}
+Hash the singles: h(D1) = {1, 5, 7}
+J. Leskovec, A. Rajaraman, J. Ullman: Mining of Massive Datasets, http://www.mmds.org
+21
+
+
+===== PAGE 22/58 =====
+Document D1 is a set of its k-shingles C1=S(D1)
+Equivalently, each document is a 
+0/1 vector in the space of k-shingles
+Each unique shingle is a dimension
+Vectors are very sparse
+A natural similarity measure is the 
+Jaccard similarity:
+sim(D1, D2) = |C1C2|/|C1C2|
+J. Leskovec, A. Rajaraman, J. Ullman: Mining of Massive Datasets, http://www.mmds.org
+22
+
+
+===== PAGE 23/58 =====
+Documents that have lots of shingles in 
+common have similar text, even if the text 
+appears in different order
+Caveat: You must pick k large enough, or most 
+documents will have most shingles
+k = 5 is OK for short documents
+k = 10 is better for long documents
+J. Leskovec, A. Rajaraman, J. Ullman: Mining of Massive Datasets, http://www.mmds.org
+23
+
+
+===== PAGE 24/58 =====
+Suppose we need to find near-duplicate 
+documents among 𝑵= 𝟏million documents
+Naïvely, we would have to compute pairwise 
+Jaccard similarities for every pair of docs
+𝑵(𝑵−𝟏)/𝟐≈ 5*1011 comparisons
+At 105 secs/day and 106 comparisons/sec, 
+it would take 5 days
+For 𝑵= 𝟏𝟎million, it takes more than a year…
+J. Leskovec, A. Rajaraman, J. Ullman: Mining of Massive Datasets, http://www.mmds.org
+24
+
+
+===== PAGE 25/58 =====
+Step 2: Minhashing: Convert large sets to 
+short signatures, while preserving similarity
+Docu-
+ment
+The set
+of strings
+of length k
+that appear
+in the doc-
+ument
+Signatures:
+short integer
+vectors that
+represent the
+sets, and
+reflect their
+similarity
+
+
+===== PAGE 26/58 =====
+Many similarity problems can be 
+formalized as finding subsets that 
+have significant intersection
+Encode sets using 0/1 (bit, boolean) vectors 
+One dimension per element in the universal set
+Interpret set intersection as bitwise AND, and 
+set union as bitwise OR
+Example: C1 = 10111; C2 = 10011
+Size of intersection = 3; size of union = 4, 
+Jaccard similarity (not distance) = 3/4
+Distance: d(C1,C2) = 1 – (Jaccard similarity) = 1/4
+J. Leskovec, A. Rajaraman, J. Ullman: Mining of Massive Datasets, http://www.mmds.org
+26
+
+
+===== PAGE 27/58 =====
+Rows = elements (shingles)
+Columns = sets (documents)
+1 in row e and column s if and only 
+if e is a member of s
+Column similarity is the Jaccard
+similarity of the corresponding 
+sets (rows with value 1)
+Typical matrix is sparse!
+Each document is a column:
+Example: sim(C1 ,C2) = ?
+Size of intersection = 3; size of union = 6, 
+Jaccard similarity (not distance) = 3/6
+d(C1,C2) = 1 – (Jaccard similarity) = 3/6
+27
+J. Leskovec, A. Rajaraman, J. Ullman: Mining of Massive Datasets, http://www.mmds.org
+0
+1
+0
+1
+0
+1
+1
+1
+1
+0
+0
+1
+1
+0
+0
+0
+1
+0
+1
+0
+1
+0
+1
+1
+0
+1
+1
+1 
+Documents
+Shingles
+
+
+===== PAGE 28/58 =====
+So far:
+Documents Sets of shingles
+Represent sets as boolean vectors in a matrix
+Next goal: Find similar columns while 
+computing small signatures
+Similarity of columns == similarity of signatures
+J. Leskovec, A. Rajaraman, J. Ullman: Mining of Massive Datasets, http://www.mmds.org
+28
+
+
+===== PAGE 29/58 =====
+Next Goal: Find similar columns, Small signatures
+Naïve approach:
+1) Signatures of columns: small summaries of columns
+2) Examine pairs of signatures to find similar columns
+Essential: Similarities of signatures and columns are related
+3) Optional: Check that columns with similar signatures 
+are really similar
+Warnings:
+Comparing all pairs may take too much time: Job for LSH
+These methods can produce false negatives, and even false 
+positives (if the optional check is not made)
+J. Leskovec, A. Rajaraman, J. Ullman: Mining of Massive Datasets, http://www.mmds.org
+29
+
+
+===== PAGE 30/58 =====
+Key idea: “hash” each column C to a small 
+signature h(C), such that:
+(1) h(C) is small enough that the signature fits in RAM
+(2) sim(C1, C2) is the same as the “similarity” of 
+signatures h(C1) and h(C2)
+Goal: Find a hash function h(·) such that:
+If sim(C1,C2) is high, then with high prob. h(C1) = h(C2)
+If sim(C1,C2) is low, then with high prob. h(C1) ≠ h(C2)
+Hash docs into buckets. Expect that “most” pairs 
+of near duplicate docs hash into the same bucket!
+J. Leskovec, A. Rajaraman, J. Ullman: Mining of Massive Datasets, http://www.mmds.org
+30
+
+
+===== PAGE 31/58 =====
+Goal: Find a hash function h(·) such that:
+if sim(C1,C2) is high, then with high prob. h(C1) = h(C2)
+if sim(C1,C2) is low, then with high prob. h(C1) ≠ h(C2)
+Clearly, the hash function depends on 
+the similarity metric:
+Not all similarity metrics have a suitable 
+hash function
+There is a suitable hash function for 
+the Jaccard similarity: It is called Min-Hashing
+J. Leskovec, A. Rajaraman, J. Ullman: Mining of Massive Datasets, http://www.mmds.org
+31
+
+
+===== PAGE 32/58 =====
+32
+Imagine the rows of the boolean matrix 
+permuted under random permutation 
+Define a “hash” function h(C) = the index of 
+the first (in the permuted order ) row in 
+which column C has value 1:
+h(C) = min(C)
+Use several (e.g., 100) independent hash 
+functions (that is, permutations) to create a 
+signature of a column
+J. Leskovec, A. Rajaraman, J. Ullman: Mining of Massive Datasets, http://www.mmds.org
+
+
+===== PAGE 33/58 =====
+33
+3
+4
+7
+2
+6
+1
+5
+Signature matrix M
+1
+2
+1
+2
+5
+7
+6
+3
+1
+2
+4
+1
+4
+1
+2
+4
+5
+1
+6
+7
+3
+2
+2
+1
+2
+1
+J. Leskovec, A. Rajaraman, J. Ullman: Mining of Massive Datasets, http://www.mmds.org
+2nd element of the permutation 
+is the first to map to a 1
+4th element of the permutation 
+is the first to map to a 1
+0
+1
+0
+1
+0
+1
+0
+1
+1
+0
+1
+0
+1
+0
+1
+0
+1
+0
+1
+0
+1
+0
+0
+1
+0
+1
+0
+1 
+Input matrix (Shingles x Documents) 
+Permutation 
+Note: Another (equivalent) way is to 
+store row indexes: 1
+5
+1
+5
+2
+3
+1
+3
+6
+4
+6
+4
+
+
+===== PAGE 34/58 =====
+Choose a random permutation 
+Claim: Pr[h(C1) = h(C2)] = sim(C1, C2) 
+Why?
+Let X be a doc (set of shingles), yX is a shingle
+Then: Pr[(y) = min((X))] = 1/|X|
+It is equally likely that any yX is mapped to the min element
+Let y be s.t. (y) = min((C1C2))
+Then either:
+(y) = min((C1))  if y C1 , or
+(y) = min((C2))  if y C2
+So the prob. that both are true is the prob. y C1 C2
+Pr[min((C1))=min((C2))]=|C1C2|/|C1C2|= sim(C1, C2) 
+J. Leskovec, A. Rajaraman, J. Ullman: Mining of Massive Datasets, http://www.mmds.org
+34
+0
+1
+1
+0
+0
+0
+1
+1
+0
+0
+0
+0 
+One of the two
+cols had to have
+1 at position y
+
+
+===== PAGE 35/58 =====
+36
+We know: Pr[h(C1) = h(C2)] = sim(C1, C2)
+Now generalize to multiple hash functions
+The similarity of two signatures is the 
+fraction of the hash functions in which they 
+agree
+Note: Because of the Min-Hash property, the 
+similarity of columns is the same as the 
+expected similarity of their signatures
+J. Leskovec, A. Rajaraman, J. Ullman: Mining of Massive Datasets, http://www.mmds.org
+
+
+===== PAGE 36/58 =====
+37
+J. Leskovec, A. Rajaraman, J. Ullman: Mining of Massive Datasets, http://www.mmds.org
+Similarities:
+1-3      2-4    1-2   3-4
+Col/Col 0.75    0.75    0       0
+Sig/Sig 0.67    1.00    0       0
+Signature matrix M
+1
+2
+1
+2
+5
+7
+6
+3
+1
+2
+4
+1
+4
+1
+2
+4
+5
+1
+6
+7
+3
+2
+2
+1
+2
+1
+0
+1
+0
+1
+0
+1
+0
+1
+1
+0
+1
+0
+1
+0
+1
+0
+1
+0
+1
+0
+1
+0
+0
+1
+0
+1
+0
+1 
+Input matrix (Shingles x Documents) 
+3
+4
+7
+2
+6
+1
+5
+Permutation 
+
+
+===== PAGE 37/58 =====
+Pick K=100 random permutations of the rows
+Think of sig(C) as a column vector
+sig(C)[i] = according to the i-th permutation, the 
+index of the first row that has a 1 in column C
+sig(C)[i] = min (i(C))
+Note: The sketch (signature) of document C is 
+small  ~𝟏𝟎𝟎bytes!
+We achieved our goal! We “compressed” 
+long bit vectors into short signatures
+J. Leskovec, A. Rajaraman, J. Ullman: Mining of Massive Datasets, http://www.mmds.org
+38
+
+
+===== PAGE 38/58 =====
+Permuting rows even once is prohibitive
+Row hashing!
+Pick K = 100 hash functions ki
+Ordering under ki gives a random row permutation!
+One-pass implementation
+For each column C and hash-func. ki keep a “slot” for 
+the min-hash value
+Initialize all sig(C)[i] = 
+Scan rows looking for 1s
+Suppose row j has 1 in column C
+Then for each ki :
+If ki(j) < sig(C)[i], then sig(C)[i] ki(j)
+J. Leskovec, A. Rajaraman, J. Ullman: Mining of Massive Datasets, http://www.mmds.org
+39
+How to pick a random
+hash function h(x)?
+Universal hashing:
+ha,b(x)=((a·x+b) mod p) mod N
+where:
+a,b … random integers
+p … prime number (p > N)
+
+
+===== PAGE 39/58 =====
+Step 3: Locality-Sensitive Hashing:
+Focus on pairs of signatures likely to be from 
+similar documents
+Docu-
+ment
+The set
+of strings
+of length k
+that appear
+in the doc-
+ument
+Signatures:
+short integer
+vectors that
+represent the
+sets, and
+reflect their
+similarity
+Locality-
+Sensitive
+Hashing
+Candidate
+pairs:
+those pairs
+of signatures
+that we need
+to test for
+similarity
+
+
+===== PAGE 40/58 =====
+Goal: Find documents with Jaccard similarity at 
+least s (for some similarity threshold, e.g., s=0.8)
+LSH – General idea: Use a function f(x,y) that 
+tells whether x and y is a candidate pair: a pair 
+of elements whose similarity must be evaluated
+For Min-Hash matrices: 
+Hash columns of signature matrix M to many buckets
+Each pair of documents that hashes into the 
+same bucket is a candidate pair
+41
+J. Leskovec, A. Rajaraman, J. Ullman: Mining of Massive Datasets, http://www.mmds.org
+1
+2
+1
+2
+1
+4
+1
+2
+2
+1
+2
+1
+
+
+===== PAGE 41/58 =====
+Pick a similarity threshold s (0 < s < 1)
+Columns x and y of M are a candidate pair if 
+their signatures agree on at least fraction s of 
+their rows: 
+M (i, x) = M (i, y) for at least frac. s values of i
+We expect documents x and y to have the same 
+(Jaccard) similarity as their signatures
+J. Leskovec, A. Rajaraman, J. Ullman: Mining of Massive Datasets, http://www.mmds.org
+42
+1
+2
+1
+2
+1
+4
+1
+2
+2
+1
+2
+1
+
+
+===== PAGE 42/58 =====
+Big idea: Hash columns of 
+signature matrix M several times
+Arrange that (only) similar columns are 
+likely to hash to the same bucket, with 
+high probability
+Candidate pairs are those that hash to 
+the same bucket
+J. Leskovec, A. Rajaraman, J. Ullman: Mining of Massive Datasets, http://www.mmds.org
+43
+1
+2
+1
+2
+1
+4
+1
+2
+2
+1
+2
+1
+
+
+===== PAGE 43/58 =====
+J. Leskovec, A. Rajaraman, J. Ullman: Mining of Massive Datasets, http://www.mmds.org
+44
+Signature matrix  M
+r rows
+per band
+b bands
+One
+signature
+1
+2
+1
+2
+1
+4
+1
+2
+2
+1
+2
+1
+
+
+===== PAGE 44/58 =====
+Divide matrix M into b bands of r rows
+For each band, hash its portion of each 
+column to a hash table with k buckets
+Make k as large as possible
+Candidate column pairs are those that hash 
+to the same bucket for ≥1 band
+Tune b and r to catch most similar pairs, 
+but few non-similar pairs
+45
+J. Leskovec, A. Rajaraman, J. Ullman: Mining of Massive Datasets, http://www.mmds.org
+
+
+===== PAGE 45/58 =====
+Matrix M
+r rows
+b bands
+Buckets
+Columns 2 and 6
+are probably identical 
+(candidate pair)
+Columns 6 and 7 are
+surely different.
+J. Leskovec, A. Rajaraman, J. Ullman: Mining of Massive Datasets, http://www.mmds.org
+46
+
+
+===== PAGE 46/58 =====
+There are enough buckets that columns are 
+unlikely to hash to the same bucket unless 
+they are identical in a particular band
+Hereafter, we assume that “same bucket” 
+means “identical in that band”
+Assumption needed only to simplify analysis, 
+not for correctness of algorithm
+47
+J. Leskovec, A. Rajaraman, J. Ullman: Mining of Massive Datasets, http://www.mmds.org
+
+
+===== PAGE 47/58 =====
+Assume the following case:
+Suppose 100,000 columns of M (100k docs)
+Signatures of 100 integers (rows)
+Therefore, signatures take 40Mb
+Choose b = 20 bands of r = 5 integers/band
+Goal: Find pairs of documents that 
+are at least s = 0.8 similar
+J. Leskovec, A. Rajaraman, J. Ullman: Mining of Massive Datasets, http://www.mmds.org
+48
+1
+2
+1
+2
+1
+4
+1
+2
+2
+1
+2
+1
+
+
+===== PAGE 48/58 =====
+Find pairs of s=0.8 similarity, set b=20, r=5
+Assume: sim(C1, C2) = 0.8
+Since sim(C1, C2) s, we want C1, C2 to be a candidate 
+pair: We want them to hash to at least 1 common bucket
+(at least one band is identical)
+Probability C1, C2 identical in one particular 
+band: (0.8)5 = 0.328
+Probability C1, C2 are not similar in all of the 20 
+bands: (1-0.328)20 = 0.00035 
+i.e., about 1/3000th of the 80%-similar column pairs 
+are false negatives (we miss them)
+We would find 99.965% pairs of truly similar documents
+49
+J. Leskovec, A. Rajaraman, J. Ullman: Mining of Massive Datasets, http://www.mmds.org
+1
+2
+1
+2
+1
+4
+1
+2
+2
+1
+2
+1
+
+
+===== PAGE 49/58 =====
+Find pairs of s=0.8 similarity, set b=20, r=5
+Assume: sim(C1, C2) = 0.3
+Since sim(C1, C2) < s we want C1, C2 to hash to NO 
+common buckets (all bands should be different)
+Probability C1, C2 identical in one particular 
+band: (0.3)5 = 0.00243
+Probability C1, C2 identical in at least 1 of 20 
+bands: 1 - (1 - 0.00243)20 = 0.0474
+In other words, approximately 4.74% pairs of docs 
+with similarity 0.3% end up becoming candidate pairs
+They are false positives since we will have to examine them 
+(they are candidate pairs) but then it will turn out their 
+similarity is below threshold s
+J. Leskovec, A. Rajaraman, J. Ullman: Mining of Massive Datasets, http://www.mmds.org
+50
+1
+2
+1
+2
+1
+4
+1
+2
+2
+1
+2
+1
+
+
+===== PAGE 50/58 =====
+Pick:
+The number of Min-Hashes (rows of M) 
+The number of bands b, and 
+The number of rows r per band
+to balance false positives/negatives
+Example: If we had only 15 bands of 5 
+rows, the number of false positives would 
+go down, but the number of false negatives 
+would go up
+51
+J. Leskovec, A. Rajaraman, J. Ullman: Mining of Massive Datasets, http://www.mmds.org
+1
+2
+1
+2
+1
+4
+1
+2
+2
+1
+2
+1
+
+
+===== PAGE 51/58 =====
+Similarity t =sim(C1, C2) of two sets
+Probability
+of sharing
+a bucket
+Similarity threshold s
+No chance
+if t < s
+Probability = 1 
+if t > s
+52
+J. Leskovec, A. Rajaraman, J. Ullman: Mining of Massive Datasets, http://www.mmds.org
+
+
+===== PAGE 52/58 =====
+J. Leskovec, A. Rajaraman, J. Ullman: Mining of Massive Datasets, http://www.mmds.org
+53
+Remember:
+Probability of
+equal hash-values
+= similarity
+Similarity t =sim(C1, C2) of two sets
+Probability
+of sharing
+a bucket
+
+
+===== PAGE 53/58 =====
+Columns C1 and C2 have similarity t
+Pick any band (r rows)
+Prob. that all rows in band equal = tr
+Prob. that some row in band unequal = 1 - tr
+Prob. that no band identical  = (1 - tr)b
+Prob. that at least 1 band identical =                  
+1 - (1 - tr)b
+54
+J. Leskovec, A. Rajaraman, J. Ullman: Mining of Massive Datasets, http://www.mmds.org
+
+
+===== PAGE 54/58 =====
+t r 
+All rows
+of a band
+are equal
+1 -
+Some row
+of a band
+unequal
+(
+)b 
+No bands
+identical
+1 -
+At least
+one band
+identical
+s ~ (1/b)1/r 
+55
+J. Leskovec, A. Rajaraman, J. Ullman: Mining of Massive Datasets, http://www.mmds.org
+Similarity t=sim(C1, C2) of two sets
+Probability
+of sharing
+a bucket
+
+
+===== PAGE 55/58 =====
+Similarity threshold s
+Prob. that at least 1 band is identical:
+J. Leskovec, A. Rajaraman, J. Ullman: Mining of Massive Datasets, http://www.mmds.org
+56
+s
+1-(1-sr)b
+.2
+.006
+.3
+.047
+.4
+.186
+.5
+.470
+.6
+.802
+.7
+.975
+.8
+.9996
+
+
+===== PAGE 56/58 =====
+Picking r and b to get the best S-curve
+50 hash-functions (r=5, b=10)
+J. Leskovec, A. Rajaraman, J. Ullman: Mining of Massive Datasets, http://www.mmds.org
+57
+0
+0.1
+0.2
+0.3
+0.4
+0.5
+0.6
+0.7
+0.8
+0.9
+1
+0
+0.1
+0.2
+0.3
+0.4
+0.5
+0.6
+0.7
+0.8
+0.9
+1
+Blue area: False Negative rate
+Green area: False Positive rate
+Similarity
+Prob. sharing a bucket
+
+
+===== PAGE 57/58 =====
+Tune M, b, r to get almost all pairs with 
+similar signatures, but eliminate most pairs 
+that do not have similar signatures
+Check in main memory that candidate pairs
+really do have similar signatures
+Optional: In another pass through data, 
+check that the remaining candidate pairs 
+really represent similar documents
+58
+J. Leskovec, A. Rajaraman, J. Ullman: Mining of Massive Datasets, http://www.mmds.org
+
+
+===== PAGE 58/58 =====
+Shingling: Convert documents to sets
+We used hashing to assign each shingle an ID
+Min-Hashing: Convert large sets to short 
+signatures, while preserving similarity
+We used similarity preserving hashing to generate 
+signatures with property Pr[h(C1) = h(C2)] = sim(C1, C2)
+We used hashing to get around generating random 
+permutations
+Locality-Sensitive Hashing: Focus on pairs of 
+signatures likely to be from similar documents
+We used hashing to find candidate pairs of similarity s
+J. Leskovec, A. Rajaraman, J. Ullman: Mining of Massive Datasets, http://www.mmds.org
+59
