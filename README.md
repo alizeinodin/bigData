@@ -1,6 +1,6 @@
 # جزوه امتحانی داده‌های حجیم
 
-این مخزن شامل جزوه جامع امتحانی درس **تحلیل‌ها و سیستم‌های داده‌های حجیم**
+این مخزن شامل جزوه جامع امتحانی درس **Big Data Analytics**
 (دکتر فرساد زمانی بروجنی) است که از حدود ۴۱۰ صفحه لکچر و نمونه سوال استخراج شده.
 
 ## فایل‌های اصلی
@@ -17,14 +17,15 @@
 ## ساختار جزوه
 
 1. چیت‌شیت و **ایندکس با شماره واقعی PDF**
-2. Big Data، داده‌کاوی، KDD، مخازن داده، TF-IDF و Hadoop
-3. Cluster Computing ↔ RDBMS و SQL ↔ NoSQL
-4. MapReduce، اجرای داخلی، جبر رابطه‌ای، ضرب ماتریس و هزینه ارتباطی
-5. Shingle / MinHash / LSH / Jaccard / PCY
-6. فاصله‌ها، انواع صفت، نرمال‌سازی و داده ترکیبی
-7. Apriori / Closed / Maximal / CHARM
-8. Clustering از K-Means تا BFR، CURE، DBSCAN، OPTICS، STING و CLIQUE
-9. **حل کامل نمونه سوالات استاد**
+2. Technical Glossary با Definition تمام اصطلاحات و Algorithmها
+3. Big Data، Data Mining، KDD، Data Repository، TF-IDF و Hadoop
+4. Cluster Computing ↔ RDBMS و SQL ↔ NoSQL
+5. MapReduce، اجرای داخلی، Relational Algebra، Matrix Processing و Communication Cost
+6. Shingle / MinHash / LSH / Jaccard / PCY
+7. Distances، Attribute Types، Normalization و Mixed Data
+8. Apriori / Closed / Maximal / CHARM
+9. Clustering از K-Means تا BFR، CURE، DBSCAN، OPTICS، STING و CLIQUE
+10. **حل کامل نمونه سوالات استاد**
 
 ## نکته امتحان جزوه‌باز
 

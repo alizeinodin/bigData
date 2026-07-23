@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """Build Word-style Big Data exam notes with correct page index."""
 from pathlib import Path
+import re
 from weasyprint import HTML, CSS as WCSS
 import fitz, shutil
 
@@ -49,6 +50,26 @@ tr:nth-child(even) td { background: #f7fafc; }
   background: #fffaf0; border-right: 4px solid #dd6b20; padding: .3rem .42rem;
   margin: .3rem 0; color: #7b341e; page-break-inside: avoid;
 }
+.def {
+  background: #eef6ff;
+  border: 1px solid #63b3ed;
+  border-right: 5px solid #2b6cb0;
+  border-radius: 5px;
+  padding: .38rem .5rem;
+  margin: .3rem 0 .42rem;
+  page-break-inside: avoid;
+}
+.def .name {
+  direction: ltr;
+  unicode-bidi: isolate;
+  text-align: right;
+  font-size: 11pt;
+  font-weight: 700;
+  color: #1a365d;
+  margin-bottom: .18rem;
+}
+.def .row { margin: .1rem 0; }
+.def .label { color: #2c5282; font-weight: 700; }
 .meta { color: #2d3748; margin-bottom: .35rem; font-size: 9.2pt; }
 /* Word-like formula box: FORCE LTR, no mirroring */
 .eq {
@@ -94,6 +115,12 @@ tr:nth-child(even) td { background: #f7fafc; }
   padding: .28rem .4rem; margin: .16rem 0;
   white-space: pre-wrap; border-radius: 3px;
 }
+.ex .calc.rtl-calc {
+  direction: rtl !important;
+  unicode-bidi: plaintext !important;
+  text-align: right;
+  font-family: "DejaVu Sans", Tahoma, sans-serif;
+}
 .ans {
   background: #ebf8ff; border: 1px solid #63b3ed; padding: .2rem .32rem;
   margin-top: .18rem; font-weight: bold; color: #2c5282;
@@ -121,11 +148,125 @@ def ex(title, steps, answer=None):
     body = ''
     for s in steps:
         if isinstance(s, tuple) and s[0] == 'calc':
-            body += f'<div class="calc">{s[1]}</div>'
+            direction_class = ' rtl-calc' if re.search(r'[\u0600-\u06ff]', s[1]) else ''
+            body += f'<div class="calc{direction_class}">{s[1]}</div>'
         else:
             body += f'<div class="step">{s}</div>'
     ans = f'<div class="ans">پاسخ نهایی: {answer}</div>' if answer else ''
     return f'<div class="ex"><div class="title">{title}</div>{body}{ans}</div>'
+
+
+def defn(name, definition, purpose, execution=None):
+    """A consistent Definition → Purpose → Execution card."""
+    how = (
+        f'<div class="row"><span class="label">Execution:</span> {execution}</div>'
+        if execution else ''
+    )
+    return (
+        f'<div class="def"><div class="name">{name}</div>'
+        f'<div class="row"><span class="label">Definition:</span> {definition}</div>'
+        f'<div class="row"><span class="label">Purpose:</span> {purpose}</div>'
+        f'{how}</div>'
+    )
+
+
+TECHNICAL_TERMS = [
+    # Longer phrases must be replaced first.
+    ('خوشه‌بندی مبتنی بر چگالی', 'Density-based Clustering'),
+    ('خوشه‌بندی مبتنی بر شبکه', 'Grid-based Clustering'),
+    ('خوشه‌بندی سلسله‌مراتبی', 'Hierarchical Clustering'),
+    ('خوشه‌بندی افرازی', 'Partitioning Clustering'),
+    ('ماتریس عدم تشابه', 'Dissimilarity Matrix'),
+    ('صفات دودویی نامتقارن', 'Asymmetric Binary Attributes'),
+    ('صفات دودویی متقارن', 'Symmetric Binary Attributes'),
+    ('ضرب ماتریس در ماتریس', 'Matrix–Matrix Multiplication'),
+    ('ضرب ماتریس در بردار', 'Matrix–Vector Multiplication'),
+    ('مجموعه اقلام پرتکرار', 'Frequent Itemset'),
+    ('دنباله پرتکرار', 'Frequent Subsequence'),
+    ('زیرساختار پرتکرار', 'Frequent Substructure'),
+    ('قوانین انجمنی', 'Association Rules'),
+    ('قانون انجمنی', 'Association Rule'),
+    ('بستار تعدی', 'Transitive Closure'),
+    ('هزینه ارتباطی', 'Communication Cost'),
+    ('نرخ تکثیر', 'Replication Rate'),
+    ('ماتریس مشخصه', 'Characteristic Matrix'),
+    ('داده‌های حجیم', 'Big Data'),
+    ('داده‌کاوی', 'Data Mining'),
+    ('پاک‌سازی داده', 'Data Cleaning'),
+    ('یکپارچه‌سازی داده', 'Data Integration'),
+    ('انتخاب داده', 'Data Selection'),
+    ('تبدیل داده', 'Data Transformation'),
+    ('ارزیابی الگو', 'Pattern Evaluation'),
+    ('نمایش دانش', 'Knowledge Presentation'),
+    ('استخراج ویژگی', 'Feature Extraction'),
+    ('تحمل خرابی', 'Fault Tolerance'),
+    ('دسترس‌پذیری بالا', 'High Availability'),
+    ('توازن بار', 'Load Balancing'),
+    ('پایگاه داده رابطه‌ای', 'Relational Database'),
+    ('پایگاه داده تراکنشی', 'Transactional Database'),
+    ('پایگاه داده', 'Database'),
+    ('انبار داده', 'Data Warehouse'),
+    ('مکعب داده', 'Data Cube'),
+    ('جریان داده', 'Data Stream'),
+    ('سری زمانی', 'Time Series'),
+    ('مخزن داده', 'Data Repository'),
+    ('جبر رابطه‌ای', 'Relational Algebra'),
+    ('حذف تکراری', 'Duplicate Elimination'),
+    ('ضرب دکارتی', 'Cartesian Product'),
+    ('فاصله اقلیدسی', 'Euclidean Distance'),
+    ('فاصله منهتن', 'Manhattan Distance'),
+    ('فاصله‌های', 'Distances'),
+    ('فاصله‌ها', 'Distances'),
+    ('فاصله', 'Distance'),
+    ('صفات اسمی', 'Nominal Attributes'),
+    ('صفت اسمی', 'Nominal Attribute'),
+    ('صفت ترتیبی', 'Ordinal Attribute'),
+    ('اسمی', 'Nominal'),
+    ('دودویی', 'Binary'),
+    ('ماتریس داده', 'Data Matrix'),
+    ('ماتریس‌ها', 'Matrices'),
+    ('ماتریس', 'Matrix'),
+    ('بردارها', 'Vectors'),
+    ('بردار', 'Vector'),
+    ('تراکنش‌های', 'Transactions'),
+    ('تراکنش‌ها', 'Transactions'),
+    ('تراکنش', 'Transaction'),
+    ('الگوریتم‌های', 'Algorithms'),
+    ('الگوریتم‌ها', 'Algorithms'),
+    ('الگوریتم', 'Algorithm'),
+    ('درهم‌سازی', 'Hashing'),
+    ('مقیاس‌پذیری', 'Scalability'),
+    ('پرس‌وجو', 'Query'),
+    ('نویز', 'Noise'),
+    ('شعاع', 'Radius'),
+    ('قطر', 'Diameter'),
+    ('چگالی', 'Density'),
+    ('طبقه‌بندی', 'Classification'),
+    ('خوشه‌بندی', 'Clustering'),
+    ('خوشه‌های', 'Clusters'),
+    ('خوشه‌ها', 'Clusters'),
+    ('خوشه‌ای', 'Cluster'),
+    ('خوشه', 'Cluster'),
+    ('یادگیری بدون سرپرست', 'Unsupervised Learning'),
+    ('یادگیری با برچسب', 'Supervised Learning'),
+    ('الگوی پرتکرار', 'Frequent Pattern'),
+    ('پرتکرار', 'Frequent'),
+    ('نقطه پرت', 'Outlier'),
+    ('توصیه‌گر', 'Recommender System'),
+    ('مشابهت', 'Similarity'),
+    ('شباهت', 'Similarity'),
+    ('نرمال‌سازی', 'Normalization'),
+    ('گروه‌بندی', 'Grouping'),
+    ('تجمیع', 'Aggregation'),
+    ('کاهنده', 'Reducer'),
+]
+
+
+def technicalize(html):
+    """Use English technical vocabulary while keeping prose Persian and RTL."""
+    for fa, en in TECHNICAL_TERMS:
+        html = html.replace(fa, en)
+    return html
 
 
 def h2(title, mark):
@@ -142,6 +283,7 @@ def make_index(pg, total):
 <table>
 <tr><th>کلمه کلیدی سوال</th><th>بخش</th><th>چه بنویسی</th><th>صفحه</th></tr>
 {row("چیت‌شیت و فرمول‌های حیاتی", "چیت‌شیت", "تعریف + فرمول", "CHEAT")}
+{row("Definition همه Technical Termها", "Technical Glossary", "Definition + Purpose", "GLOSS")}
 {row("TF-IDF / Collaborative Filtering", "بخش 1", "فرمول + مثال عددی", "S1")}
 {row("Cluster ↔ RDBMS / Hadoop", "بخش 2", "جدول تفاوت‌ها", "S2")}
 {row("MapReduce / Combiner / Pregel", "بخش 3", "۳ مرحله + خرابی", "S3")}
@@ -203,7 +345,7 @@ cheat = h2('چیت‌شیت سریع', 'CHEAT') + '''
      'P(candidate) = 1 − (1 − sʳ)ᵇ']
 ) + eq(
     ['L₂ = √ Σ (xᵢ − yᵢ)²          L₁ = Σ |xᵢ − yᵢ|',
-     'L∞ = max |xᵢ − yᵢ|           اسمی: d = (p − m) / p',
+     'L∞ = max |xᵢ − yᵢ|           Nominal: d = (p − m) / p',
      'support(A⇒B) = support(A ∪ B)',
      'confidence(A⇒B) = support(A ∪ B) / support(A)',
      'M ⊆ C ⊆ F']
@@ -218,7 +360,154 @@ cheat = h2('چیت‌شیت سریع', 'CHEAT') + '''
 </table>
 '''
 
-s1 = h2('بخش 1 — مقدمه Big Data و TF-IDF', 'S1') + '''
+glossary = h2('Technical Glossary — Definition همه اصطلاحات', 'GLOSS') + '''
+<div class="note">
+این Glossary قبل از درس‌ها آمده تا هر اصطلاح فنی ابتدا Definition داشته باشد.
+در متن جزوه نیز نام‌های فنی به English نوشته شده‌اند.
+</div>
+<h3>Data and Mining Concepts</h3>
+<table>
+<tr><th>Technical Term</th><th>Definition</th><th>What it does / When to use</th></tr>
+<tr><td>Big Data</td><td>داده‌ای که حجم، سرعت یا تنوع آن از توان ابزارهای معمول برای پردازش در زمان معقول بیشتر است.</td><td>مسئله‌هایی که Scale آن‌ها به Storage و Processing توزیع‌شده نیاز دارد.</td></tr>
+<tr><td>Data Mining</td><td>فرایند استخراج Pattern یا Knowledge مفید از حجم زیاد داده.</td><td>کشف رابطه، گروه، Trend، Class و Outlier.</td></tr>
+<tr><td>KDD</td><td>فرایند کامل تبدیل Raw Data به Knowledge؛ Data Mining یکی از مرحله‌های آن است.</td><td>وقتی Cleaning تا Presentation باید به‌صورت end-to-end انجام شود.</td></tr>
+<tr><td>Data Cleaning</td><td>تشخیص و اصلاح/حذف Noise، Error، Missing و Inconsistent Data.</td><td>بهبود کیفیت Input پیش از تحلیل.</td></tr>
+<tr><td>Data Integration</td><td>ترکیب Data از چند Source در یک View سازگار.</td><td>ساخت Dataset واحد از چند Database/File.</td></tr>
+<tr><td>Data Selection</td><td>انتخاب رکوردها و Attributeهای مرتبط با Question.</td><td>کم‌کردن Data غیرضروری.</td></tr>
+<tr><td>Data Transformation</td><td>تغییر Format/Scale/Structure مثل Normalization و Aggregation.</td><td>آماده‌سازی Data برای Algorithm.</td></tr>
+<tr><td>Pattern Evaluation</td><td>سنجش Validity، Novelty و Usefulness الگو.</td><td>حذف Patternهای ضعیف یا تصادفی.</td></tr>
+<tr><td>Knowledge Presentation</td><td>ارائه نتیجه با Rule، Table، Chart یا Visualization.</td><td>قابل‌فهم‌کردن خروجی برای User.</td></tr>
+<tr><td>Classification</td><td>Supervised Learning برای پیش‌بینی Label از قبل تعریف‌شده.</td><td>Spam detection، تشخیص بیماری، Class مشتری.</td></tr>
+<tr><td>Clustering</td><td>Unsupervised Learning برای ساخت Clusterهای طبیعی بدون Label.</td><td>Customer segmentation و Document grouping.</td></tr>
+<tr><td>Outlier</td><td>شیئی که رفتار آن با Pattern عمومی Data سازگار نیست.</td><td>Fraud، Fault و رخداد نادر مهم.</td></tr>
+<tr><td>Feature Extraction</td><td>ساخت یا انتخاب نمایش‌های informative از Raw Data.</td><td>کاهش پیچیدگی و آماده‌سازی برای Model.</td></tr>
+<tr><td>PageRank</td><td>Graph-ranking Algorithm که Importance هر Vertex را از Linkهای ورودی Vertexهای مهم می‌گیرد.</td><td>رتبه‌بندی Web Page و تحلیل Graph.</td></tr>
+<tr><td>Naive Bayes</td><td>Probabilistic Classifier مبتنی بر Bayes و فرض Conditional Independence Featureها.</td><td>Text Classification و Baseline سریع.</td></tr>
+<tr><td>SVM</td><td>Classifierی که Hyperplane با Maximum Margin بین Classها پیدا می‌کند.</td><td>High-dimensional Classification.</td></tr>
+<tr><td>KNN</td><td>Instance-based Method که Label را از k Neighbor نزدیک می‌گیرد.</td><td>Classification/Regression ساده بدون Training صریح.</td></tr>
+<tr><td>Hash Function</td><td>تابعی که Key را به Bucket Number نگاشت می‌کند.</td><td>Lookup، Partitioning و کاهش Search.</td></tr>
+<tr><td>Index</td><td>Data Structure کمکی برای یافتن سریع Record بدون Full Scan.</td><td>بهبود Query و Data Access.</td></tr>
+</table>
+
+<h3>Big Data Systems</h3>
+<table>
+<tr><th>Technical Term</th><th>Definition</th><th>What it does / When to use</th></tr>
+<tr><td>RDBMS</td><td>Database جدولی با Relation، Schema و معمولاً ACID Transaction.</td><td>Data ساخت‌یافته و Transaction دقیق.</td></tr>
+<tr><td>Cluster Computing</td><td>اجرای یک Workload روی مجموعه‌ای از Nodeهای متصل.</td><td>Horizontal Scaling، Parallelism و Fault Tolerance.</td></tr>
+<tr><td>Hadoop</td><td>Framework متن‌باز برای Distributed Storage و Batch Processing روی Commodity Hardware.</td><td>پردازش فایل‌های بسیار بزرگ با HDFS و MapReduce.</td></tr>
+<tr><td>HDFS</td><td>Distributed File System که File را Block‌بندی و روی چند DataNode Replicate می‌کند.</td><td>Storage مقاوم به Failure برای Fileهای بزرگ.</td></tr>
+<tr><td>ACID</td><td>Atomicity، Consistency، Isolation و Durability؛ چهار Property اصلی Transaction.</td><td>تضمین Correctness و Reliability در RDBMS.</td></tr>
+<tr><td>High Availability</td><td>در دسترس‌ماندن Service با حداقل Downtime حتی هنگام Failure.</td><td>Systemهای Critical و Always-on.</td></tr>
+<tr><td>Fault Tolerance</td><td>توان ادامه کار درست یا Recovery در حضور Hardware/Software Failure.</td><td>Distributed System و Cluster.</td></tr>
+<tr><td>Data Replication</td><td>نگهداری چند Copy از Data روی Node/Locationهای متفاوت.</td><td>Availability، Read Scalability و Recovery.</td></tr>
+<tr><td>Load Balancing</td><td>توزیع Workload بین Nodeها برای جلوگیری از Bottleneck.</td><td>استفاده متعادل از Resourceها.</td></tr>
+<tr><td>NameNode</td><td>Master نگهدارنده Metadata و Block Location در HDFS.</td><td>مدیریت Namespace و محل File Blockها.</td></tr>
+<tr><td>DataNode</td><td>Worker ذخیره‌کننده Block واقعی HDFS.</td><td>Read/Write Block و ارسال Heartbeat.</td></tr>
+<tr><td>HBase</td><td>Distributed Wide-column Database روی HDFS.</td><td>Random Read/Write روی Tableهای بسیار بزرگ.</td></tr>
+<tr><td>Hive</td><td>Data Warehouse Layer با Query Language شبیه SQL روی Hadoop.</td><td>Analytics و ETL روی Data حجیم.</td></tr>
+<tr><td>Pig</td><td>High-level Data-flow Platform روی Hadoop.</td><td>نوشتن Pipelineهای ETL با Script ساده‌تر از MapReduce خام.</td></tr>
+<tr><td>JVM</td><td>Runtime اجرای Java Bytecode با Memory و Process Isolation.</td><td>اجرای Portable Processهای Hadoop.</td></tr>
+<tr><td>Data Warehouse</td><td>Repository یکپارچه، Historical و Subject-oriented برای Analytics.</td><td>BI، OLAP و Reporting.</td></tr>
+<tr><td>Data Stream</td><td>Sequence پیوسته و بالقوه نامتناهی از Eventها با امکان Scan محدود.</td><td>Real-time Monitoring و Online Analytics.</td></tr>
+<tr><td>MapReduce</td><td>Programming Model توزیع‌شده با Map، Shuffle و Reduce.</td><td>Batch Processing موازی و Fault-tolerant.</td></tr>
+<tr><td>Partitioning</td><td>تعیین Reducer مقصد برای هر Key، معمولاً با Hash.</td><td>تضمین می‌کند Keyهای یکسان یک‌جا پردازش شوند.</td></tr>
+<tr><td>Combiner</td><td>Reduce محلی اختیاری در سمت Mapper.</td><td>کاهش Network Traffic برای Operationهای Associative/Commutative.</td></tr>
+<tr><td>Workflow System</td><td>DAG از چند Processing Function/Job.</td><td>Pipelineهای پیچیده‌تر از Map→Reduce.</td></tr>
+<tr><td>Pregel</td><td>Vertex-centric Framework برای Graph Algorithmهای Iterative.</td><td>اجرای SuperStep و Recovery با Checkpoint.</td></tr>
+</table>
+
+<h3>Similarity and Frequent Pattern Concepts</h3>
+<table>
+<tr><th>Technical Term</th><th>Definition</th><th>What it does / When to use</th></tr>
+<tr><td>TF</td><td>Normalized frequency یک Term در یک Document.</td><td>اندازه می‌گیرد Term داخل همان Document چقدر مهم است.</td></tr>
+<tr><td>IDF</td><td>Logarithmic inverse document frequency یک Term در Collection.</td><td>Termهای رایج در همه Documentها را کم‌اهمیت می‌کند.</td></tr>
+<tr><td>TF-IDF</td><td>Product دو مقدار TF و IDF.</td><td>یافتن Termهای زیاد در یک Document ولی نادر در Collection.</td></tr>
+<tr><td>Bonferroni Principle</td><td>در تعداد بسیار زیاد Test، Event تصادفی نادر نیز بارها رخ می‌دهد.</td><td>پیشگیری از تفسیر False Positive به‌عنوان Pattern واقعی.</td></tr>
+<tr><td>Shingle</td><td>Sequence متوالی از k Token در Document.</td><td>تبدیل Document به Set برای Near-duplicate detection.</td></tr>
+<tr><td>Jaccard Similarity</td><td>Ratio اندازه Intersection به Union دو Set.</td><td>Similarity بین Setها و Binary asymmetric Data.</td></tr>
+<tr><td>MinHash</td><td>Randomized Hash که احتمال Collision آن برابر Jaccard است.</td><td>تبدیل Set بزرگ به Signature کوتاه.</td></tr>
+<tr><td>LSH</td><td>Hashing Family که Objectهای مشابه را با احتمال زیاد هم‌باکت می‌کند.</td><td>کاهش Pair Comparison از حالت تقریباً Quadratic.</td></tr>
+<tr><td>Apriori</td><td>Level-wise Algorithm برای Frequent Itemset Mining با Downward Closure.</td><td>ساخت Candidate و Prune با استفاده از زیرمجموعه‌های Frequent.</td></tr>
+<tr><td>PCY</td><td>بهبود Apriori برای Frequent Pair با Hash Bucket و Bitmap.</td><td>کاهش تعداد Candidate Pairها در Pass 2.</td></tr>
+<tr><td>Euclidean Distance</td><td>طول خط مستقیم بین دو Numeric Vector.</td><td>Geometry معمول و K-Means.</td></tr>
+<tr><td>Manhattan Distance</td><td>Sum قدرمطلق Differenceهای Coordinateها.</td><td>Grid Movement و Robustness بیشتر نسبت به تغییرات مربعی.</td></tr>
+<tr><td>Cosine Similarity</td><td>Cosine زاویه بین دو Vector.</td><td>Document و Sparse Vector؛ تمرکز بر Direction نه Magnitude.</td></tr>
+<tr><td>Hamming Distance</td><td>تعداد Positionهای متفاوت در دو Sequence هم‌طول.</td><td>Binary Data و Error Code.</td></tr>
+<tr><td>Edit Distance</td><td>حداقل Cost برای تبدیل یک String به دیگری.</td><td>Text/DNA Matching و Spell Correction.</td></tr>
+<tr><td>Normalization</td><td>تبدیل Scale Attributeها به Range/Distribution قابل‌مقایسه.</td><td>جلوگیری از غلبه Attribute با Unit بزرگ.</td></tr>
+<tr><td>Closed Itemset</td><td>Frequent Itemset بدون Superset هم‌Support.</td><td>نمایش فشرده و Lossless از Supportها.</td></tr>
+<tr><td>Maximal Itemset</td><td>Frequent Itemset بدون هیچ Superset Frequent.</td><td>فشرده‌تر، ولی Support زیرمجموعه‌ها را نگه نمی‌دارد.</td></tr>
+<tr><td>CHARM</td><td>Algorithm عمودی برای Mining مستقیم Closed Itemset با Tidset.</td><td>کاهش Candidate با Relationهای Tidset.</td></tr>
+</table>
+
+<h3>Clustering Algorithms</h3>
+<table>
+<tr><th>Technical Term</th><th>Definition</th><th>What it does / When to use</th></tr>
+<tr><td>K-Means</td><td>Partitioning Algorithm که هر Cluster را با Mean/Centroid نمایش می‌دهد.</td><td>Numeric Data و Clusterهای تقریباً Spherical.</td></tr>
+<tr><td>K-Medoids</td><td>Partitioning Algorithm با یک Data Point واقعی به‌عنوان Medoid.</td><td>مقاوم‌تر به Outlier و مناسب Distance دلخواه.</td></tr>
+<tr><td>PAM</td><td>Search-based K-Medoids با Swap کردن Medoid و Non-medoid.</td><td>Dataset کوچک/متوسط با کیفیت بهتر از K-Means.</td></tr>
+<tr><td>CLARA</td><td>اجرای PAM روی چند Sample از Dataset بزرگ.</td><td>Scaling K-Medoids با Sampling.</td></tr>
+<tr><td>CLARANS</td><td>Randomized Search در Graph جواب‌های Medoid.</td><td>تعادل کیفیت و Cost بهتر از CLARA.</td></tr>
+<tr><td>Hierarchical Clustering</td><td>ساخت Tree از Merge یا Splitهای پیاپی Cluster.</td><td>وقتی ساختار چندسطحی و Dendrogram لازم است.</td></tr>
+<tr><td>BFR</td><td>Scalable K-Means-like Algorithm با Summaryهای N/SUM/SUMSQ.</td><td>Data بسیار بزرگ و Clusterهای Gaussian axis-aligned.</td></tr>
+<tr><td>CURE</td><td>Hierarchical Algorithm با چند Representative Point کوچک‌شده.</td><td>Clusterهای Non-spherical و مقاومت بهتر به Outlier.</td></tr>
+<tr><td>DBSCAN</td><td>Density-based Algorithm با Eps و MinPts.</td><td>Cluster با Shape دلخواه و Noise detection.</td></tr>
+<tr><td>OPTICS</td><td>Ordering-based Density Algorithm با Reachability Distance.</td><td>Dataset با Densityهای متفاوت.</td></tr>
+<tr><td>STING</td><td>Hierarchical Grid Algorithm با Summary آماری Cellها.</td><td>Query سریع روی Spatial Data.</td></tr>
+<tr><td>CLIQUE</td><td>Grid/Density Subspace Clustering برای High-dimensional Data.</td><td>کشف Cluster در بعضی Dimensionها.</td></tr>
+<tr><td>DENCLUE</td><td>Density-based Clustering مبتنی بر Influence Function و Density Attractor.</td><td>کشف Shape دلخواه و Noise با Model پیوسته Density.</td></tr>
+<tr><td>Centroid</td><td>Mean Coordinateهای Pointهای یک Cluster؛ لزوماً Data Point واقعی نیست.</td><td>نماینده Cluster در فضای Euclidean.</td></tr>
+<tr><td>Clustroid / Medoid</td><td>Data Point واقعی که Aggregate Distance آن تا بقیه کمینه است.</td><td>نماینده Cluster در فضای Non-Euclidean یا مقاوم‌تر به Outlier.</td></tr>
+<tr><td>Linkage</td><td>Rule محاسبه Distance بین دو Cluster در Hierarchical Clustering.</td><td>Single، Complete، Average یا Centroid Merge.</td></tr>
+<tr><td>Dendrogram</td><td>Tree Diagram نمایش ترتیب Merge/Splitهای Hierarchical Clustering.</td><td>انتخاب Level یا تعداد Cluster با Cut کردن Tree.</td></tr>
+</table>
+'''
+
+s1 = (
+    h2('Section 1 — Big Data, Data Mining and TF-IDF', 'S1')
+    + defn(
+        'Big Data',
+        'Datasetی که Volume، Velocity یا Variety آن از توان Toolهای معمول برای Processing در زمان معقول بیشتر است.',
+        'برای مسئله‌هایی که به Distributed Storage و Parallel Processing نیاز دارند.',
+        'ابتدا Scale و نوع Data را تشخیص بده؛ سپس Framework مناسب مثل Hadoop را انتخاب کن.',
+    )
+    + defn(
+        'Data Mining',
+        'فرایند کشف Pattern، Relation یا Knowledge مفید از Data.',
+        'برای Description، Prediction، Classification، Clustering، Association و Outlier Detection.',
+        'Question را مشخص کن، Data را آماده کن، Algorithm را اجرا و Pattern را Evaluate کن.',
+    )
+    + defn(
+        'TF (Term Frequency)',
+        'میزان تکرار Normalized یک Term در یک Document.',
+        'نشان می‌دهد Term داخل همان Document چقدر برجسته است.',
+        'تعداد Term را بر بیشترین تکرار هر Term در همان Document تقسیم کن.',
+    )
+    + defn(
+        'IDF (Inverse Document Frequency)',
+        'وزنی برای اندازه‌گیری نادر بودن Term در کل Document Collection.',
+        'Termهای بسیار عمومی را کم‌اهمیت و Termهای کمیاب‌تر را پررنگ می‌کند.',
+        'نسبت N به تعداد Documentهای دارای Term را بگیر و log₂ آن را حساب کن.',
+    )
+    + defn(
+        'TF-IDF',
+        'Product مقدار TF و IDF برای یک Term در یک Document.',
+        'یافتن Termی که در یک Document زیاد ولی در کل Collection نادر است.',
+        'TF و IDF را جدا حساب کن و در هم ضرب کن.',
+    )
+    + defn(
+        'Bonferroni Principle',
+        'وقتی تعداد Testها بسیار زیاد است، Event کم‌احتمال صرفاً بر اثر Chance بارها رخ می‌دهد.',
+        'برای جلوگیری از اشتباه‌گرفتن False Positive با Pattern واقعی در Massive Data.',
+        'تعداد Eventهای تصادفی مورد انتظار را از احتمال هر Event × تعداد Trialها حساب و با یافته واقعی مقایسه کن.',
+    )
+    + defn(
+        'Collaborative Filtering',
+        'Recommendation Methodی که از Rating/Behavior کاربران یا Itemهای مشابه استفاده می‌کند.',
+        'پیشنهاد Movie، Product یا Content بدون نیاز به Feature محتوایی کامل.',
+        'User-based: Similar User پیدا کن؛ Item-based: Similar Item پیدا کن؛ سپس Score ناشناخته را Estimate کن.',
+    )
+    + '''
 <h3>سه V</h3>
 <ul>
 <li><b>Volume:</b> حجم خیلی زیاد</li>
@@ -258,8 +547,35 @@ s1 = h2('بخش 1 — مقدمه Big Data و TF-IDF', 'S1') + '''
 </ul>
 <p class="small">در درس به Recommendation Engine (مثل Netflix و Amazon) و Behavioral Data اشاره شده.</p>
 '''
+)
 
-s2 = h2('بخش 2 — Cluster Computing در برابر RDBMS و Hadoop', 'S2') + '''
+s2 = (
+    h2('Section 2 — Cluster Computing, RDBMS and Hadoop', 'S2')
+    + defn(
+        'RDBMS',
+        'Database Management System مبتنی بر Relation/Table، Schema و Transactionهای ACID.',
+        'برای Structured Data، Query پیچیده و Transaction دقیق.',
+        'Data را در Table ذخیره کن و با SQL و Key/Constraint مدیریت کن.',
+    )
+    + defn(
+        'Cluster Computing',
+        'اجرای یک Workload روی چند Node متصل که به‌صورت یک System همکاری می‌کنند.',
+        'برای Horizontal Scaling، Parallel Processing، High Availability و Fault Tolerance.',
+        'Data و Task را بین Nodeها Partition کن، Load را Balance و Failure را Recover کن.',
+    )
+    + defn(
+        'Hadoop',
+        'Framework متن‌باز برای Distributed Storage و Batch Processing روی Commodity Hardware.',
+        'برای Fileهای بسیار بزرگ و Jobهای Sequential/Batch با Fault Tolerance.',
+        'Data را در HDFS ذخیره و Computation را با MapReduce نزدیک Data اجرا کن.',
+    )
+    + defn(
+        'HDFS',
+        'Distributed File System که File را به Block تقسیم و روی چند DataNode Replicate می‌کند.',
+        'Storage مقیاس‌پذیر و مقاوم به Failure برای Fileهای بزرگ.',
+        'NameNode Metadata را نگه می‌دارد؛ DataNodeها Blockها را ذخیره می‌کنند.',
+    )
+    + '''
 <p><b>محدودیت‌های RDBMS:</b> مقیاس‌پذیری گران، سرعت، تحمل خرابی، پردازش پیشرفته روی ترابایت/پتابایت.</p>
 <p><b>ویژگی‌های Cluster (حفظ کن):</b> High Availability، Fault Tolerance، Data Replication، Load Balancing، Automated Failover، Backup & Recovery، Monitoring، Scalability افقی.</p>
 <table>
@@ -278,8 +594,41 @@ s2 = h2('بخش 2 — Cluster Computing در برابر RDBMS و Hadoop', 'S2') 
 NameNode / DataNode / JobTracker / TaskTracker &nbsp;|&nbsp; معمولاً هر chunk سه کپی دارد.</p>
 <p><b>SQL در برابر NoSQL:</b> SQL اسکیمای ثابت و ACID؛ NoSQL اسکیما انعطاف‌پذیر و مقیاس افقی.</p>
 '''
+)
 
-s3 = h2('بخش 3 — MapReduce', 'S3') + '''
+s3 = (
+    h2('Section 3 — MapReduce', 'S3')
+    + defn(
+        'MapReduce',
+        'Distributed Programming Model برای تبدیل Input به Key–Value Pair و Aggregate کردن Valueهای هم‌Key.',
+        'برای Batch Processing موازی روی Data حجیم با Fault Recovery خودکار.',
+        '۱) Map بنویس ۲) System، Shuffle/Sort/Partition را انجام می‌دهد ۳) Reduce بنویس.',
+    )
+    + defn(
+        'Map',
+        'تابعی که هر Input Record را به صفر، یک یا چند (key,value) تبدیل می‌کند.',
+        'استخراج Key و Intermediate Value به‌صورت Parallel.',
+        'هر Mapper یک Chunk مستقل را می‌خواند و emit می‌کند.',
+    )
+    + defn(
+        'Shuffle',
+        'مرحله System برای انتقال، Sort و Group کردن همه Valueهای دارای Key یکسان.',
+        'تضمین می‌کند Reduce همه Valueهای یک Key را یک‌جا ببیند.',
+        'Partitioner مقصد را تعیین می‌کند و System داده‌های میانی را روی Network جابه‌جا می‌کند.',
+    )
+    + defn(
+        'Reduce',
+        'تابعی که یک Key و List همه Valueهای آن را به Output نهایی تبدیل می‌کند.',
+        'Aggregation، Join، Count، Sum یا ساخت نتیجه نهایی.',
+        'برای هر Key دقیقاً روی Group متناظر اجرا می‌شود.',
+    )
+    + defn(
+        'Combiner',
+        'Optional Local Reduce در سمت Mapper.',
+        'کاهش حجم Intermediate Data روی Network.',
+        'فقط وقتی Operation، Associative و Commutative است اجرا کن؛ جای Reduce نهایی نیست.',
+    )
+    + '''
 <p>تو فقط دو تابع می‌نویسی؛ سیستم بقیه کار را می‌کند.</p>
 <ol>
 <li><b>Map:</b> هر تکه ورودی را بخوان و جفت‌های (کلید، مقدار) بساز.</li>
@@ -314,9 +663,15 @@ s3 = h2('بخش 3 — MapReduce', 'S3') + '''
 <p><b>Workflow Systems:</b> به‌جای فقط Map→Reduce، یک گراف DAG از توابع (Clustera، Hyracks).</p>
 <p><b>Pregel:</b> سیستم محاسبات گرافی با SuperStep و Checkpoint برای تحمل خرابی در الگوریتم‌های بازگشتی.</p>
 <p><b>PageRank تکراری:</b></p>
-''' + eq(['v⁽ᵗ⁺¹⁾ = M × v⁽ᵗ⁾   تا وقتی تغییر خیلی کم شود'])
+''' + eq(['v⁽ᵗ⁺¹⁾ = M × v⁽ᵗ⁾'])
+)
 
-s4 = h2('بخش 4 — جبر رابطه‌ای با MapReduce', 'S4') + '''
+s4 = h2('Section 4 — Relational Algebra with MapReduce', 'S4') + defn(
+    'Relational Algebra',
+    'مجموعه Operationهای رسمی برای تبدیل Relationها به Relation جدید.',
+    'پایه مفهومی Query Processing شامل Selection، Projection، Union، Difference و Join.',
+    'هر Operation را به Map برای تولید Key و Reduce برای ترکیب Recordهای مرتبط تبدیل کن.',
+) + '''
 <table>
 <tr><th>عملیات</th><th>ایده ساده</th></tr>
 <tr><td>Selection</td><td>فقط تاپل‌هایی که شرط دارند را نگه دار</td></tr>
@@ -341,12 +696,22 @@ s4 = h2('بخش 4 — جبر رابطه‌ای با MapReduce', 'S4') + '''
 <p><b>Multi-way Join:</b> Join همزمان چند جدول. هزینه انتقال داده مهم است؛ Replication Rate نشان می‌دهد هر ورودی چند بار کپی می‌شود.</p>
 '''
 
-s5 = h2('بخش 5 — ضرب ماتریس با MapReduce', 'S5') + '''
+s5 = h2('Section 5 — Matrix Processing with MapReduce', 'S5') + defn(
+    'Matrix–Vector Multiplication',
+    'Operationی که Dot Product هر Row ماتریس M با Vector V را در uᵢ قرار می‌دهد.',
+    'هسته بسیاری از Graph/ML Algorithmها مانند PageRank.',
+    'Mapper مقدار mᵢⱼ×vⱼ را با Key=i می‌سازد و Reducer تمام Partial Productهای Row i را Sum می‌کند.',
+) + defn(
+    'Matrix–Matrix Multiplication',
+    'Operationی که pᵢₖ را از Dot Product سطر i ماتریس اول و ستون k ماتریس دوم می‌سازد.',
+    'اجرای Linear Algebra بزرگ‌تر از RAM.',
+    'Job اول روی Index مشترک j، Partial Product می‌سازد؛ Job دوم روی Key=(i,k) آن‌ها را Sum می‌کند.',
+) + '''
 <p>هدف ماتریس×بردار: برای هر سطر ماتریس یک عدد بساز = ضرب داخلی آن سطر در بردار.</p>
 ''' + eq(
     ['uᵢ = mᵢ₁·v₁ + mᵢ₂·v₂ + … + mᵢₙ·vₙ',
      'Map:    (i , mᵢⱼ × vⱼ)',
-     'Reduce: برای هر i همه مقدارها را جمع کن']
+     'Reduce: uᵢ = Σⱼ (mᵢⱼ × vⱼ)']
 ) + ex('مثال کامل — انگار اولین بار می‌بینی', [
     'ماتریس و بردار:',
     ('calc',
@@ -376,7 +741,32 @@ s5 = h2('بخش 5 — ضرب ماتریس با MapReduce', 'S5') + '''
     ('calc', 'خانه (1,1) از P: 1×2 + 0×4 + 5×6 = 2+0+30 = 32'),
 ])
 
-s6 = h2('بخش 6 — Shingle ، MinHash ، LSH', 'S6') + eq(
+s6 = h2('Section 6 — Shingle, Jaccard, MinHash, LSH and PCY', 'S6') + defn(
+    'Shingle',
+    'Sequence متوالی از k Token در یک Document.',
+    'تبدیل Document به Setی که بخشی از ترتیب Local را حفظ می‌کند.',
+    'Window طول k را روی متن Slide کن و برای Set، Duplicateها را حذف کن.',
+) + defn(
+    'Jaccard Similarity',
+    'Ratio اندازه Intersection به Union دو Set.',
+    'مقایسه Set، Basket، Shingle و Binary asymmetric Data.',
+    'تعداد عضوهای مشترک را بر تعداد عضوهای موجود در حداقل یک Set تقسیم کن.',
+) + defn(
+    'MinHash',
+    'Randomized Hashing که Collision Probability آن برای دو Set برابر Jaccard است.',
+    'ساخت Signature کوتاه با حفظ تقریبی Similarity.',
+    'چند Permutation/Hash Function بساز و برای هرکدام Minimum Row دارای 1 را ثبت کن.',
+) + defn(
+    'LSH (Locality-Sensitive Hashing)',
+    'Hashing Schemeی که Objectهای مشابه را با احتمال بیشتر در یک Bucket قرار می‌دهد.',
+    'کاهش Pair Comparison و تولید Candidate Pair.',
+    'Signature را به b Band با r Row تقسیم کن؛ Match کامل در حداقل یک Band کافی است.',
+) + defn(
+    'PCY',
+    'Two-pass Algorithm برای Frequent Pair Mining با Hash Bucket و Bitmap.',
+    'Prune کردن Candidate Pair بیشتر از Apriori ساده.',
+    'Pass1 Item و Bucket را Count کن؛ Pass2 فقط Pairهای با Item Frequent و Bucket Frequent را Count کن.',
+) + eq(
     ['Document → Shingles → MinHash Signature → LSH → Candidates → Exact check']
 ) + '''
 <h3>Shingle چیست؟</h3>
@@ -396,7 +786,7 @@ s6 = h2('بخش 6 — Shingle ، MinHash ، LSH', 'S6') + eq(
 ], 'J = 0.25') + '''
 <h3>MinHash</h3>
 <p>عناصر را تصادفی مرتب کن. برای هر مجموعه، <b>اولین</b> عنصری که در آن ترتیب می‌بینی را به‌عنوان hash بردار.</p>
-''' + eq(['Pr[ هش دو مجموعه برابر شود ] = Jaccard همان دو مجموعه']) + ex('مثال', [
+''' + eq(['Pr[ hπ(C₁) = hπ(C₂) ] = J(C₁, C₂)']) + ex('مثال', [
     'A = {1,3,4} و B = {2,3,4,5}',
     ('calc', 'Jaccard واقعی = 2/5 = 0.4'),
     'یک ترتیب تصادفی فرضی: 3 ، 1 ، 5 ، 2 ، 4',
@@ -422,12 +812,42 @@ s6 = h2('بخش 6 — Shingle ، MinHash ، LSH', 'S6') + eq(
 <p><b>PCY:</b> در گذر اول علاوه بر شمارش اقلام، جفت‌ها را به bucket هش کن. در گذر دوم فقط جفتی را بشمار که هر دو قلم frequent باشند و bucketشان هم frequent باشد.</p>
 '''
 
-s7 = h2('بخش 7 — فاصله‌ها و تشابه تاپل‌ها', 'S7') + '''
+s7 = h2('Section 7 — Distance, Similarity and Tuple Comparison', 'S7') + defn(
+    'Metric',
+    'Distance Functionی که Non-negativity، Identity، Symmetry و Triangle Inequality را ارضا می‌کند.',
+    'اندازه‌گیری معتبر جدایی دو Object و استفاده در Search یا Clustering.',
+    'نوع Attribute و Geometry مسئله را تشخیص بده، سپس Metric مناسب را انتخاب و در صورت نیاز Normalize کن.',
+) + defn(
+    'Euclidean Distance (L₂)',
+    'طول خط مستقیم بین دو Numeric Vector.',
+    'فضای Continuous و Clusterهای تقریباً Spherical.',
+    'Difference هر Dimension را Square، Sum و Square Root کن.',
+) + defn(
+    'Manhattan Distance (L₁)',
+    'Sum قدرمطلق Differenceها در همه Dimensionها.',
+    'حرکت Grid-like و حالتی که Difference خطی مهم است.',
+    'قدر مطلق Difference هر Dimension را جمع کن.',
+) + defn(
+    'Cosine Similarity',
+    'Cosine زاویه بین دو Vector؛ Magnitude را تا حد زیادی نادیده می‌گیرد.',
+    'Text Vectorهای Sparse و مقایسه Direction دو Profile.',
+    'Dot Product را بر Product دو Vector Norm تقسیم کن.',
+) + defn(
+    'Hamming Distance',
+    'تعداد Positionهای متفاوت دو Sequence هم‌طول.',
+    'Binary Code، String و Error Detection.',
+    'Positionها را یک‌به‌یک Compare و Mismatchها را Count کن.',
+) + defn(
+    'Edit Distance',
+    'کمترین Cost Operationهای لازم برای تبدیل یک String به String دیگر.',
+    'String Matching، Spell Checking و DNA.',
+    'با Dynamic Programming حداقل Insert/Delete/Replace را محاسبه کن؛ فرمول LCS جزوه فقط حالت Insert/Delete است.',
+) + '''
 <p><b>چهار شرط Metric:</b> نامنفی، صفر فقط وقتی دو شیء یکی باشند، تقارن، نامساوی مثلثی.</p>
 ''' + eq(
-    ['L₂ (اقلیدسی) = √( (x₁−y₁)² + (x₂−y₂)² + … )',
-     'L₁ (منهتن)   = |x₁−y₁| + |x₂−y₂| + …',
-     'L∞           = بزرگ‌ترین |xᵢ − yᵢ|']
+    ['Euclidean L₂ = √( (x₁−y₁)² + (x₂−y₂)² + … )',
+     'Manhattan L₁ = |x₁−y₁| + |x₂−y₂| + …',
+     'Chebyshev L∞ = max |xᵢ − yᵢ|']
 ) + ex('مثال روی یک جفت نقطه', [
     'X = (1, 2) و Y = (4, 6)',
     ('calc',
@@ -435,7 +855,7 @@ s7 = h2('بخش 7 — فاصله‌ها و تشابه تاپل‌ها', 'S7') + 
      'L1 = |1-4| + |2-6| = 3 + 4 = 7\n'
      'L∞ = max(3, 4) = 4'),
 ]) + eq(
-    ['برای صفات اسمی:  d = (p − m) / p'],
+    ['Nominal Dissimilarity: d = (p − m) / p'],
     ['p = تعداد کل صفات', 'm = تعداد صفاتی که مقدارشان یکی است']
 ) + ex('مثال اسمی', [
     'شخص1: (مرد، تهران، لیسانس)',
@@ -444,16 +864,46 @@ s7 = h2('بخش 7 — فاصله‌ها و تشابه تاپل‌ها', 'S7') + 
 ], '1/3') + '''
 <p><b>دودویی:</b> q = هر دو 1 &nbsp;|&nbsp; r = (0,1) &nbsp;|&nbsp; s = (1,0) &nbsp;|&nbsp; t = هر دو 0</p>
 ''' + eq(
-    ['متقارن:   d = (r + s) / (q + r + s + t)',
-     'نامتقارن: d = (r + s) / (q + r + s)     ← صفر-صفر مهم نیست',
-     'Jaccard:  J = q / (q + r + s)']
+    ['Symmetric Binary: d = (r + s) / (q + r + s + t)',
+     'Asymmetric Binary: d = (r + s) / (q + r + s)',
+     'Jaccard Binary: J = q / (q + r + s)']
 ) + '''
 <p><b>Cosine</b> برای متن خوب است. <b>Hamming</b> = تعداد خانه‌های متفاوت. <b>Edit distance</b> = |X| + |Y| − 2×|LCS|.</p>
 <p><b>Data Matrix:</b> سطر = تاپل، ستون = صفت. <b>Dissimilarity Matrix:</b> فاصله بین تاپل‌ها؛ قطر اصلی صفر.</p>
 '''
 
-s8 = h2('بخش 8 — Apriori ، Closed ، Maximal', 'S8') + eq(
-    ['support(X) = (تعداد تراکنش شامل X) / (کل تراکنش‌ها)',
+s8 = h2('Section 8 — Apriori, Closed Itemset, Maximal Itemset and CHARM', 'S8') + defn(
+    'Support',
+    'Fraction تراکنش‌هایی که یک Itemset یا Rule را پوشش می‌دهند.',
+    'اندازه‌گیری فراگیری Pattern در کل Database.',
+    'Support Count را بر تعداد کل Transactionها تقسیم کن.',
+) + defn(
+    'Confidence',
+    'Conditional Probability رخداد Consequent وقتی Antecedent رخ داده است.',
+    'اندازه‌گیری Reliability یک Association Rule.',
+    'Support(A∪B) را بر Support(A) تقسیم کن.',
+) + defn(
+    'Apriori',
+    'Level-wise Frequent Itemset Algorithm مبتنی بر Downward-closure Property.',
+    'کشف Itemsetهای Frequent و ساخت Association Rule.',
+    'از L₁ شروع کن؛ Candidate Cₖ را Join، با زیرمجموعه‌های Infrequent Prune و Support را Count کن.',
+) + defn(
+    'Closed Itemset',
+    'Frequent Itemsetی که Superset هم‌Support ندارد.',
+    'فشرده‌سازی Lossless Frequent Patternها همراه با حفظ Support.',
+    'Supersetها را بررسی کن یا Closure را با Tidset به‌دست آور.',
+) + defn(
+    'Maximal Itemset',
+    'Frequent Itemsetی که هیچ Superset Frequent ندارد.',
+    'فشرده‌سازی قوی‌تر مرز Frequentها، بدون حفظ Support دقیق زیرمجموعه‌ها.',
+    'بررسی کن هیچ Extension آن Support≥minsup نداشته باشد.',
+) + defn(
+    'CHARM',
+    'Vertical Closed-itemset Mining Algorithm مبتنی بر Tidset Intersection.',
+    'استخراج مستقیم Closed Itemset بدون تولید همه Frequent Itemsetها.',
+    'Itemsetهای هم‌Prefix را ترکیب، Tidsetها را Intersect و با Equality/Subset Relation هرس کن.',
+) + eq(
+    ['support(X) = support_count(X) / |D|',
      'support(A ⇒ B) = support(A ∪ B)',
      'confidence(A ⇒ B) = support(A ∪ B) / support(A)',
      'M ⊆ C ⊆ F']
@@ -484,7 +934,37 @@ s8 = h2('بخش 8 — Apriori ، Closed ، Maximal', 'S8') + eq(
 <p><b>CHARM:</b> الگوریتم استخراج Closed با اشتراک tidsetها.</p>
 '''
 
-s9 = h2('بخش 9 — خوشه‌بندی', 'S9') + '''
+s9 = h2('Section 9 — Clustering', 'S9') + defn(
+    'Clustering',
+    'Unsupervised Learning برای تقسیم Objectها به Clusterهایی با Intra-cluster Similarity زیاد و Inter-cluster Similarity کم.',
+    'کشف Structure پنهان وقتی Label از قبل وجود ندارد.',
+    'Representation، Similarity/Distance، Algorithm Family و Stop Criterion را انتخاب و نتیجه را Evaluate کن.',
+) + defn(
+    'K-Means',
+    'Partitioning Algorithm که هر Cluster را با Centroid/Mean نمایش می‌دهد.',
+    'Numeric Data، Clusterهای Spherical و اجرای سریع.',
+    'k Centroid اولیه → Assignment به نزدیک‌ترین Centroid → Update Mean → Repeat تا Convergence.',
+) + defn(
+    'DBSCAN',
+    'Density-based Clustering با دو Parameter به نام Eps و MinPts.',
+    'کشف Shape دلخواه، Core/Border Point و Noise بدون تعیین k.',
+    'از یک Core شروع کن و همه Pointهای Density-reachable را Expand کن.',
+) + defn(
+    'BFR',
+    'Scalable Clustering Algorithm برای Data عظیم با Summaryهای N، SUM و SUMSQ.',
+    'وقتی Data در RAM جا نمی‌شود و Clusterها تقریباً Gaussian و axis-aligned هستند.',
+    'Chunkها را بخوان؛ Pointها را بین DS/CS/RS قرار بده و Summaryها را Update/Merge کن.',
+) + defn(
+    'CURE',
+    'Hierarchical Clustering با چند Representative Point Shrink‌شده برای هر Cluster.',
+    'Clusterهای Non-spherical و مقاومت بهتر در برابر Outlier.',
+    'Sample → Hierarchical Clustering → انتخاب Representativeهای دور → Shrink → Merge/Assign.',
+) + defn(
+    'OPTICS',
+    'Ordering Algorithm مبتنی بر Density که Reachability Structure را تولید می‌کند.',
+    'Datasetهایی که Clusterهای با Density متفاوت دارند.',
+    'Core Distance و Reachability Distance را حساب و Pointها را به ترتیب Priority پردازش کن.',
+) + '''
 <p><b>هدف:</b> اعضای یک خوشه به هم نزدیک؛ خوشه‌های مختلف از هم دور. یادگیری بدون سرپرست (برخلاف طبقه‌بندی).</p>
 <p>انواع: Partitioning (K-Means، K-Medoids، PAM، CLARA، CLARANS) · Hierarchical (AGNES، DIANA) ·
 Density (DBSCAN، OPTICS، DENCLUE) · Grid (STING، CLIQUE)</p>
@@ -503,11 +983,11 @@ Density (DBSCAN، OPTICS، DENCLUE) · Grid (STING، CLIQUE)</p>
 <p><b>Linkage:</b> Single = کمینه فاصله بین دو خوشه · Complete = بیشینه · Average = میانگین · Centroid = فاصله مراکز.</p>
 <p><b>K-Medoids / PAM:</b> نماینده خوشه یک نقطه واقعی است (مقاوم‌تر به پرت). CLARA روی نمونه کار می‌کند؛ CLARANS جستجوی تصادفی می‌کند.</p>
 ''' + eq(
-    ['DBSCAN: اگر در شعاع Eps حداقل MinPts نقطه باشد → Core Point',
-     'Border = کنار Core است ولی خودش Core نیست',
-     'Noise = هیچ‌کدام']
+    ['Core(q) ⇔ |N_Eps(q)| ≥ MinPts',
+     'Border(q) ⇔ ¬Core(q) ∧ ∃c: Core(c) ∧ q ∈ N_Eps(c)',
+     'Noise(q) ⇔ q is neither Core nor Border']
 ) + eq(
-    ['BFR (داده بزرگ اقلیدسی):',
+    ['BFR Cluster Summary:',
      'centroidᵢ = SUMᵢ / N',
      'varianceᵢ = SUMSQᵢ/N − (SUMᵢ/N)²']
 ) + '''
@@ -529,7 +1009,7 @@ Cluster: مقیاس افقی، commodity servers، replication و failover، ا�
 <h3>سوال 3 — Matrix×Vector با MapReduce</h3>
 ''' + eq(
     ['Map: (i , mᵢⱼ × vⱼ)',
-     'Reduce: uᵢ = مجموع همه مقدارهای کلید i']
+     'Reduce: uᵢ = Σⱼ (mᵢⱼ × vⱼ)']
 ) + '''
 <p>مثال عددی کامل در بخش 5.</p>
 <h3>سوال 4 — TF-IDF</h3>
@@ -584,7 +1064,16 @@ d1 = h2('تکمله A — حفظیات داده‌کاوی، KDD، مخازن د
 <li><b>Pattern Evaluation:</b> تشخیص الگوهای معتبر و جالب</li>
 <li><b>Knowledge Presentation:</b> نمایش و مصورسازی دانش</li>
 </ol>
-
+''' + ex('KDD — End-to-end Example', [
+    'مسئله: پیش‌بینی Customer Churn یک اپراتور.',
+    'Data Cleaning: حذف Record خراب و تکمیل Missing Value.',
+    'Data Integration: ترکیب Billing، Call Log و Support Ticket.',
+    'Data Selection: انتخاب Customerهای فعال و Attributeهای مرتبط.',
+    'Data Transformation: ساخت Feature مثل میانگین مصرف و تعداد Complaint.',
+    'Data Mining: اجرای Classification Model.',
+    'Pattern Evaluation: بررسی Precision/Recall و False Positive.',
+    'Knowledge Presentation: Dashboard فهرست Customerهای پرریسک.',
+]) + '''
 <h3>وظایف داده‌کاوی: حفظیات مهم</h3>
 <table>
 <tr><th>وظیفه</th><th>تعریف</th><th>مثال</th></tr>
@@ -652,8 +1141,8 @@ No Coupling، Loose Coupling، Semitight Coupling و Tight Coupling.</p>
 
 <h3>Bonferroni — مثال حفظی هتل</h3>
 ''' + eq([
-    'P(ملاقات یک جفت در یک روز) = (0.01 × 0.01) / 10⁵ = 10⁻⁹',
-    'E(دو ملاقات تصادفی) ≈ C(10⁹,2) × C(1000,2) × 10⁻¹⁸ ≈ 250,000'
+    'P(one pair meets in one day) = (0.01 × 0.01) / 10⁵ = 10⁻⁹',
+    'E(random double meetings) ≈ C(10⁹,2) × C(1000,2) × 10⁻¹⁸ ≈ 250,000'
 ]) + '''
 <p>نتیجه: حتی با داده کاملاً تصادفی، حدود ۲۵۰هزار جفت «مشکوک» پیدا می‌شود؛
 پس در داده عظیم، نادر بودن به‌تنهایی دلیل معناداری نیست.</p>
@@ -751,8 +1240,8 @@ Join Taskهای مربوط به دو سر مسیر فرستاده می‌شود�
 
 <h3>Communication Cost، Reducer Size و Replication Rate</h3>
 ''' + eq([
-    'Communication Cost = Σ |Input هر Task|',
-    'ρ = (تعداد کل خروجی‌های Map) / (تعداد عناصر ورودی)'
+    'Communication Cost = Σ_task |Input_task|',
+    'ρ = (# Map outputs) / (# input elements)'
 ]) + '''
 <p><b>Reducer Size (q):</b> بیشترین تعداد مقدار مجاز برای یک Reduce. q کوچک‌تر →
 Reduceهای بیشتر و موازی‌سازی بیشتر؛ اگر ورودی Reduce در RAM جا شود I/O کمتر می‌شود.</p>
@@ -767,7 +1256,7 @@ Reduceهای بیشتر و موازی‌سازی بیشتر؛ اگر ورودی 
 <li>T(w,x) چون B ندارد به تمام b سطر تکثیر می‌شود.</li>
 </ul>
 ''' + eq([
-    'CCᵣₑdᵤcₑ = s + c·r + b·t       با شرط b·c = k',
+    'CCᵣₑdᵤcₑ = s + c·r + b·t       subject to b·c = k',
     'b* = √(k·r/t)       c* = √(k·t/r)',
     'CCᵣₑdᵤcₑ(min) = s + 2√(krt)',
     'CCₜₒₜₐₗ = r + 2s + t + 2√(krt)'
@@ -801,8 +1290,8 @@ MinHash کلاسیک روی Set است.</p>
 <p>در اجتماع C₁∪C₂، نخستین عضو permutation با احتمال مساوی هر عضو است. دو MinHash
 فقط وقتی برابرند که نخستین عضو از اشتراک آمده باشد؛ بنابراین احتمال = |اشتراک|/|اجتماع|.</p>
 ''' + eq([
-    'Ĵ(C₁,C₂) = (تعداد سطرهای برابر دو Signature) / K',
-    'E[Ĵ] = J واقعی'
+    'Ĵ(C₁,C₂) = (# equal Signature rows) / K',
+    'E[Ĵ] = J'
 ]) + '''
 <p>هرچه تعداد توابع K بیشتر باشد، تخمین پایدارتر ولی حافظه/زمان بیشتر می‌شود.</p>
 
@@ -814,7 +1303,7 @@ MinHash کلاسیک روی Set است.</p>
 sig(C)[i] = min(sig(C)[i], hᵢ(j)).</li>
 </ol>
 ''' + eq([
-    'hₐ,ᵦ(x) = ((a·x + b) mod p) mod N      (p > N و اول)'
+    'hₐ,ᵦ(x) = ((a·x + b) mod p) mod N      (prime p > N)'
 ]) + '''
 
 <h3>LSH: منطق AND/OR و S-Curve</h3>
@@ -827,8 +1316,8 @@ sig(C)[i] = min(sig(C)[i], hᵢ(j)).</li>
 <li>Exact Check، FP را حذف می‌کند؛ FN از دست‌رفته را نمی‌تواند برگرداند.</li>
 </ul>
 ''' + eq([
-    'False Negative = جفت واقعاً مشابه که candidate نشده',
-    'False Positive = جفت نامشابه که candidate شده و بعداً رد می‌شود'
+    'False Negative = similar pair not selected as candidate',
+    'False Positive = dissimilar pair selected as candidate'
 ]) + '''
 
 <h3>Normalizing و Mixed Attributes</h3>
@@ -851,13 +1340,20 @@ sig(C)[i] = min(sig(C)[i], hᵢ(j)).</li>
 </ol>
 <p>باکت frequent تضمین نمی‌کند خود جفت frequent باشد (collision)، اما باکت infrequent
 قطعاً نمی‌تواند جفت frequent داشته باشد.</p>
-
+''' + ex('PCY — Mini Example', [
+    'Basketها: {1,2,3} ، {1,2} ، {2,3} و minsup count=2.',
+    'Pass 1: Itemها و Hash Bucketها را Count کن.',
+    ('calc', 'count(1)=2, count(2)=3, count(3)=2\\n'
+             'bucket h(1,2): count=2 -> frequent bit=1\\n'
+             'bucket h(1,3): count=1 -> bit=0'),
+    'Pass 2: Pair {1,3} به‌دلیل bit=0 حذف می‌شود، حتی اگر هر دو Item Frequent باشند.',
+]) + '''
 <h3>Closure، Tidset و Closed</h3>
 ''' + eq([
-    't(X) = { TIDهایی که X در تراکنش آن‌هاست }',
-    'i(Y) = { اقلام مشترک در همه TIDهای Y }',
+    't(X) = { tid ∈ T | X ⊆ transaction(tid) }',
+    'i(Y) = { item ∈ I | item occurs in every tid ∈ Y }',
     'closure: c(X) = i(t(X))',
-    'X بسته است ⇔ c(X) = X'
+    'X is Closed ⇔ c(X) = X'
 ]) + '''
 <p>در کلاس itemsetهای با tidset یکسان، بزرگ‌ترین itemset همان Closed نماینده است.
 Closed یک نمایش lossless برای support است؛ Maximal فشرده‌تر است ولی support زیرمجموعه‌ها را از دست می‌دهد.</p>
@@ -870,7 +1366,13 @@ Closed یک نمایش lossless برای support است؛ Maximal فشرده‌�
 <li>tidset برابر → اقلام همیشه باهم‌اند؛ در closure ادغام شوند.</li>
 <li>رابطه زیرمجموعه tidsetها برای هرس شاخه‌ها استفاده می‌شود.</li>
 </ul>
-
+''' + ex('CHARM / Closure — Mini Example', [
+    'Transactions: T1={A,B,C} ، T2={A,B} ، T3={A,B,C}.',
+    ('calc', 't(A)  = {1,2,3}\\n'
+             't(B)  = {1,2,3}\\n'
+             't(AB) = {1,2,3}'),
+    'A و B چون Tidset یکسان دارند Merge می‌شوند. c(A)=AB؛ پس A Closed نیست.',
+]) + '''
 <h3>قواعد Non-redundant</h3>
 <p>از Closedها یک basis کوچک از قواعد می‌سازیم که سایر قواعد قابل استنتاج باشند.
 قواعد confidence=100٪ از closed بزرگ‌تر به کوچک‌ترند؛ قواعد کمتر از 100٪ به closed
@@ -899,7 +1401,7 @@ d4 = h2('تکمله D — جزئیات کامل الگوریتم‌های خوش
 <h3>Centroid در برابر Clustroid</h3>
 ''' + eq([
     'Centroid μC = (1/|C|) Σₓ∈C x',
-    'Clustroid = یک نقطه واقعی که مجموع/بیشینه فاصله تا بقیه را کمینه کند'
+    'Clustroid = argmin_(x∈C) Σ_(y∈C) d(x,y)'
 ]) + '''
 <p>Centroid مناسب فضای اقلیدسی و ممکن است عضو واقعی داده نباشد. در اسناد/رشته‌ها
 «میانگین» معنی ندارد، پس clustroid یا medoid می‌گیریم.</p>
@@ -986,7 +1488,7 @@ d4 = h2('تکمله D — جزئیات کامل الگوریتم‌های خوش
 
 <h3>OPTICS</h3>
 ''' + eq([
-    'coreDist(p) = فاصله p تا MinPts-اُمین همسایه',
+    'coreDist(p) = distance to the MinPts-th nearest neighbor',
     'reachDist(p,q) = max(coreDist(q), dist(p,q))'
 ]) + '''
 <p>به‌جای یک افراز، ترتیب نقاط و Reachability Plot می‌دهد. دره‌ها خوشه‌اند؛
@@ -1010,6 +1512,22 @@ d4 = h2('تکمله D — جزئیات کامل الگوریتم‌های خوش
 <tr><td>چگالی‌های متفاوت</td><td>OPTICS</td></tr>
 <tr><td>ابعاد بالا و خوشه در بعضی ابعاد</td><td>CLIQUE</td></tr>
 </table>
+<h3>Execution و Mini Example برای Algorithmهای فرعی</h3>
+<table>
+<tr><th>Algorithm</th><th>Execution خلاصه</th><th>Mini Example</th></tr>
+<tr><td>AGNES</td><td>از Single Pointها شروع و نزدیک‌ترین Clusterها را Merge کن.</td><td>اگر d(A,B)=1 کمترین باشد، اولین Merge برابر {A,B} است.</td></tr>
+<tr><td>DIANA</td><td>از یک Cluster کل شروع و دورترین Group را Split کن.</td><td>اگر D از بقیه بسیار دور باشد، نخست D جدا می‌شود.</td></tr>
+<tr><td>PAM</td><td>Medoid/Non-medoid را Swap و فقط Cost بهتر را قبول کن.</td><td>اگر Swap از A به B، Cost را 12→8 کند، B Medoid جدید است.</td></tr>
+<tr><td>CLARA</td><td>چند Sample بگیر، روی هرکدام PAM، سپس Cost را روی کل Data بسنج.</td><td>از یک‌میلیون Point پنج Sample و بهترین Medoid Set انتخاب می‌شود.</td></tr>
+<tr><td>CLARANS</td><td>Neighbor تصادفی جواب Medoid را بررسی و به جواب بهتر Move کن.</td><td>Swap تصادفی M1→P7 اگر Cost کمتر کند پذیرفته می‌شود.</td></tr>
+<tr><td>BFR</td><td>Point را با Mahalanobis به DS/CS بده؛ در غیر این صورت RS.</td><td>برای (1,2),(3,4): N=2، SUM=(4,6)، SUMSQ=(10,20)، μ=(2,3).</td></tr>
+<tr><td>CURE</td><td>Representativeهای دور را α به سمت Centroid Shrink کن.</td><td>r=(0,0)، μ=(10,0)، α=.2 ⇒ r′=(2,0).</td></tr>
+<tr><td>DBSCAN</td><td>از Core شروع و Neighborهای Density-reachable را Expand کن.</td><td>Eps=1، MinPts=3: Point با سه Neighbor، Core است.</td></tr>
+<tr><td>OPTICS</td><td>Pointها را با Priority کمترین Reachability پردازش کن.</td><td>coreDist(q)=2، dist(p,q)=3 ⇒ reachDist(p,q)=3.</td></tr>
+<tr><td>STING</td><td>از Cell سطح بالا، Cell نامرتبط را Prune و Child مرتبط را باز کن.</td><td>Spatial Query فقط Cellهای intersecting را تا سطح پایین بررسی می‌کند.</td></tr>
+<tr><td>CLIQUE</td><td>Dense Unitهای 1D را با Apriori به Subspace بالاتر Expand کن.</td><td>Cluster ممکن است فقط در Subspace شامل Age و Income آشکار باشد.</td></tr>
+<tr><td>DENCLUE</td><td>Kernel Density بساز و Pointها را به Density Attractor بفرست.</td><td>دو Peak جدا در Density Function دو Cluster ایجاد می‌کنند.</td></tr>
+</table>
 '''
 
 
@@ -1017,7 +1535,7 @@ def find_marks(pdf_path):
     doc = fitz.open(pdf_path)
     marks = {'_total': doc.page_count}
     keys = [
-        'INDEX', 'CHEAT', 'S1', 'S2', 'S3', 'S4', 'S5', 'S6',
+        'INDEX', 'CHEAT', 'GLOSS', 'S1', 'S2', 'S3', 'S4', 'S5', 'S6',
         'S7', 'S8', 'S9', 'D1', 'D2', 'D3', 'D4', 'S10',
     ]
     for k in keys:
@@ -1033,7 +1551,7 @@ def find_marks(pdf_path):
 def main():
     est = {
         k: 1 for k in [
-            'INDEX', 'CHEAT', 'S1', 'S2', 'S3', 'S4', 'S5', 'S6',
+            'INDEX', 'CHEAT', 'GLOSS', 'S1', 'S2', 'S3', 'S4', 'S5', 'S6',
             'S7', 'S8', 'S9', 'D1', 'D2', 'D3', 'D4', 'S10',
         ]
     }
@@ -1044,12 +1562,14 @@ def main():
             title,
             make_index(est, est['_total']),
             cheat,
+            glossary,
             s1, s2, d1,
             s3, s4, s5, d2,
             s6, s7, s8, d3,
             s9, d4,
             s10,
         ])
+        body = technicalize(body)
         html = ('<!DOCTYPE html><html lang="fa" dir="rtl"><head><meta charset="utf-8">'
                 '<title>جزوه امتحانی داده‌های حجیم</title></head><body>'
                 f'{body}</body></html>')
@@ -1121,6 +1641,7 @@ th {{ background: #90cdf4; }}
 <tr><th>موضوع</th><th>صفحه جزوه</th></tr>
 <tr><td>فهرست صفحات</td><td>{est["INDEX"]}</td></tr>
 <tr><td>چیت‌شیت داخل جزوه</td><td>{est["CHEAT"]}</td></tr>
+<tr><td>Technical Glossary</td><td>{est["GLOSS"]}</td></tr>
 <tr><td>TF-IDF / Collaborative</td><td>{est["S1"]}</td></tr>
 <tr><td>Cluster / Hadoop</td><td>{est["S2"]}</td></tr>
 <tr><td>MapReduce</td><td>{est["S3"]}</td></tr>
@@ -1133,6 +1654,7 @@ th {{ background: #90cdf4; }}
 </table>
 </div></div>
 </body></html>'''
+    ch = technicalize(ch)
     (OUT / 'چیت_شیت.html').write_text(ch, encoding='utf-8')
     HTML(filename=str(OUT / 'چیت_شیت.html')).write_pdf(str(OUT / 'چیت_شیت.pdf'))
     shutil.copy2(OUT / 'چیت_شیت.pdf', OUT / 'برگه_فرمول_سریع.pdf')
