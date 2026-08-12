@@ -11,6 +11,7 @@ from bidi.algorithm import get_display
 from matplotlib import font_manager
 from pptx import Presentation
 from pptx.dml.color import RGBColor
+from pptx.enum.dml import MSO_FILL
 from pptx.enum.text import PP_ALIGN
 from pptx.util import Inches, Pt
 
@@ -56,6 +57,52 @@ def style_paragraph(paragraph, size=17, bold=False, color=BODY_COLOR, align=PP_A
     paragraph.font.color.rgb = color
     paragraph.alignment = align
     set_rtl(paragraph)
+
+
+def is_dark_background_slide(slide):
+    try:
+        fill = slide.background.fill
+        if fill.type == MSO_FILL.SOLID:
+            return fill.fore_color.rgb == TITLE_COLOR
+    except Exception:
+        pass
+    return False
+
+
+def add_slide_number(slide, number, total):
+    light_footer = is_dark_background_slide(slide)
+    number_color = RGBColor(255, 255, 255) if light_footer else RGBColor(110, 110, 110)
+    meta_color = RGBColor(220, 220, 220) if light_footer else RGBColor(140, 140, 140)
+
+    footer_line = slide.shapes.add_shape(
+        1, Inches(0.4), Inches(7.02), Inches(9.2), Inches(0.015)
+    )
+    footer_line.fill.solid()
+    footer_line.fill.fore_color.rgb = (
+        RGBColor(255, 255, 255) if light_footer else RGBColor(210, 220, 230)
+    )
+    footer_line.line.fill.background()
+
+    meta_box = slide.shapes.add_textbox(Inches(0.45), Inches(7.08), Inches(4.5), Inches(0.32))
+    meta_p = meta_box.text_frame.paragraphs[0]
+    meta_p.text = f"{COURSE_NAME} | {STUDENT_NAME}"
+    style_paragraph(meta_p, size=10, color=meta_color, align=PP_ALIGN.RIGHT)
+
+    num_box = slide.shapes.add_textbox(Inches(4.0), Inches(7.05), Inches(2.0), Inches(0.35))
+    num_p = num_box.text_frame.paragraphs[0]
+    num_p.text = f"صفحه {number} از {total}"
+    style_paragraph(num_p, size=11, bold=True, color=number_color, align=PP_ALIGN.CENTER)
+
+    slide_num_box = slide.shapes.add_textbox(Inches(8.0), Inches(7.08), Inches(1.5), Inches(0.32))
+    slide_num_p = slide_num_box.text_frame.paragraphs[0]
+    slide_num_p.text = str(number)
+    style_paragraph(slide_num_p, size=10, color=meta_color, align=PP_ALIGN.LEFT)
+
+
+def apply_slide_numbers(prs):
+    total = len(prs.slides)
+    for index, slide in enumerate(prs.slides, start=1):
+        add_slide_number(slide, index, total)
 
 
 def add_title_slide(prs):
@@ -333,7 +380,7 @@ def create_charts():
     ax.text(2, 4, fa("جدول Orders"), ha="center", fontweight="bold")
     ax.text(2, 3.2, fa("Amount: 100,200,300,100,150"), ha="center", fontsize=10)
     ax.annotate("", xy=(5, 3.2), xytext=(3.5, 3.2), arrowprops=dict(arrowstyle="->", lw=2))
-    ax.text(6.5, 3.5, fa("Dictionary\n100→0\n200→1\n300→2\n150→3"), ha="center", va="center", bbox=dict(boxstyle="round", facecolor="#ddeeff"))
+    ax.text(6.5, 3.5, fa("Dictionary\n100=0\n200=1\n300=2\n150=3"), ha="center", va="center", bbox=dict(boxstyle="round", facecolor="#ddeeff"))
     ax.text(6.5, 1.5, fa("Vector\n[0,1,2,0,3]"), ha="center", va="center", bbox=dict(boxstyle="round", facecolor="#eeffdd"))
     ax.annotate("", xy=(6.5, 2.7), xytext=(6.5, 3.0), arrowprops=dict(arrowstyle="->", lw=2))
     ax.text(5, 0.5, fa("مصرف RAM کمتر + دسترسی سریع‌تر"), ha="center", fontsize=11, color="#006699")
@@ -522,7 +569,7 @@ def build_presentation():
 
     add_table_slide(
         prs,
-        "جدول مزایای Column Store (از مقاله)",
+        "جدول ۱: مزایای Column Store (از مقاله)",
         ["بهینه‌سازی", "بهبود سرعت"],
         [
             ["Column Store — داده اسکن‌شده", "۸۰–۹۵٪ کاهش"],
@@ -567,6 +614,7 @@ def build_presentation():
             "Parallel aggregation: ۴–۱۲× سریع‌تر — SUM/COUNT روی partitionهای موازی.",
             "Parallel join: ۳–۱۰× سریع‌تر — hash/merge join موازی.",
             "CPU utilization: بهبود ۶۰–۹۰٪ — runtime از دقیقه به ثانیه.",
+            "شکل ۹: نمودار مزایای پردازش موازی در HANA",
         ],
         str(charts / "parallel_processing.png"),
         image_left=5.0,
@@ -582,7 +630,7 @@ def build_presentation():
 
     add_table_slide(
         prs,
-        "جدول HTAP: ECC در برابر S/4HANA",
+        "جدول ۲: HTAP — ECC در برابر S/4HANA",
         ["حوزه", "ECC سنتی", "SAP HANA", "بهبود"],
         [
             ["گزارش عملیاتی", "تأخیر ساعتی/روزانه", "۰–۱ ثانیه", "تا ۱۰۰۰×"],
@@ -652,7 +700,7 @@ def build_presentation():
 
     add_table_slide(
         prs,
-        "جدول بهینه‌سازی کوئری",
+        "جدول ۳: بهینه‌سازی کوئری",
         ["حوزه", "ECC / ABAP", "HANA Push-Down", "بهبود"],
         [
             ["انتقال داده", "داده خام زیاد", "فقط نتیجه", "۸۰–۹۵٪"],
@@ -714,7 +762,7 @@ def build_presentation():
 
     add_table_slide(
         prs,
-        "جدول مزایای پارتیشن‌بندی",
+        "جدول ۴: مزایای پارتیشن‌بندی",
         ["حوزه", "ECC", "SAP HANA", "بهبود"],
         [
             ["Range Query", "اسکن کل جدول", "Partition pruning", "تا ۹۵٪"],
@@ -780,6 +828,7 @@ def build_presentation():
     sub.text = f"{STUDENT_NAME}\nسوالات؟"
     style_paragraph(sub, size=20, color=ACCENT_COLOR, align=PP_ALIGN.CENTER)
 
+    apply_slide_numbers(prs)
     return prs
 
 
