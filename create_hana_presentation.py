@@ -2,6 +2,7 @@
 """Generate Persian PowerPoint from SAP S/4HANA in-memory computing article."""
 
 import os
+import re
 from pathlib import Path
 
 import arabic_reshaper
@@ -28,9 +29,139 @@ STUDENT_NAME = "سید علی زین الدینی"
 PROFESSOR_NAME = "دکتر صادق زاده"
 COURSE_NAME = "پایگاه داده پیشرفته"
 
+# Latin / English fragments inside Persian paragraphs
+LTR_FRAGMENT = re.compile(
+    r"(?:"
+    r"https?://\S+|"
+    r"DOI:\S+|"
+    r"\([^)]*[A-Za-z][^)]*\)|"
+    r"[A-Za-z0-9][A-Za-z0-9_./\\+\-'\":|,%()\[\]{}×&]*"
+    r"(?:\s+[/\-&+]?\s*"
+    r"[A-Za-z0-9][A-Za-z0-9_./\\+\-'\":|,%()\[\]{}×&]*)*"
+    r")"
+)
+
+
+def to_persian_digits(value) -> str:
+    table = str.maketrans("0123456789", "۰۱۲۳۴۵۶۷۸۹")
+    return str(value).translate(table)
+
 
 def fa(text: str) -> str:
+    """Render Persian text for matplotlib (LTR canvas)."""
     return get_display(arabic_reshaper.reshape(text))
+
+
+def persian_char_count(text: str) -> int:
+    return sum(1 for ch in text if "\u0600" <= ch <= "\u06FF")
+
+
+def split_mixed_segments(text: str) -> list[tuple[str, str]]:
+    segments: list[tuple[str, str]] = []
+    pos = 0
+    while pos < len(text):
+        if text[pos].isspace():
+            next_pos = pos + 1
+            while next_pos < len(text) and text[next_pos].isspace():
+                next_pos += 1
+            segments.append((text[pos:next_pos], "rtl"))
+            pos = next_pos
+            continue
+
+        match = LTR_FRAGMENT.match(text, pos)
+        if match:
+            segments.append((match.group(0), "ltr"))
+            pos = match.end()
+            continue
+
+        next_pos = pos + 1
+        while next_pos < len(text):
+            if text[next_pos].isspace() or LTR_FRAGMENT.match(text, next_pos):
+                break
+            next_pos += 1
+        segments.append((text[pos:next_pos], "rtl"))
+        pos = next_pos
+
+    return [(segment, direction) for segment, direction in segments if segment]
+
+
+def _apply_run_style(run, size, bold, color):
+    run.font.name = FONT_NAME
+    run.font.size = Pt(size)
+    run.font.bold = bold
+    run.font.color.rgb = color
+
+
+def _clear_paragraph_runs(paragraph):
+    from pptx.oxml.ns import qn
+
+    p_el = paragraph._p
+    for run_el in list(p_el.findall(qn("a:r"))):
+        p_el.remove(run_el)
+
+
+def write_paragraph(
+    paragraph,
+    text,
+    size=17,
+    bold=False,
+    color=BODY_COLOR,
+    align=PP_ALIGN.RIGHT,
+):
+    """Write mixed Persian/English text with correct bidirectional layout."""
+    from pptx.oxml.ns import qn
+
+    text = text or ""
+    _clear_paragraph_runs(paragraph)
+
+    latin_chars = sum(1 for ch in text if ch.isascii() and ch.isalpha())
+    persian_chars = persian_char_count(text)
+
+    # Mostly English lines (references, DOI, etc.)
+    if latin_chars > 0 and persian_chars == 0:
+        run = paragraph.add_run()
+        run.text = text
+        _apply_run_style(run, size, bold, color)
+        paragraph.alignment = align
+        return
+
+    if latin_chars > persian_chars * 2:
+        run = paragraph.add_run()
+        run.text = text
+        _apply_run_style(run, size, bold, color)
+        paragraph.alignment = align
+        return
+
+    segments = split_mixed_segments(text)
+    for segment_text, direction in segments:
+        if not segment_text:
+            continue
+        run = paragraph.add_run()
+        if direction == "ltr":
+            # Isolate English/technical fragments inside RTL paragraphs.
+            run.text = "\u2066" + segment_text + "\u2069"
+        else:
+            run.text = segment_text
+        _apply_run_style(run, size, bold, color)
+
+    paragraph.alignment = align
+    p_pr = paragraph._p.get_or_add_pPr()
+    p_pr.set(qn("a:rtl"), "1")
+
+
+def set_text_frame_rtl(text_frame):
+    from pptx.oxml.ns import qn
+
+    body_pr = text_frame._txBody.bodyPr
+    body_pr.set("rtlCol", "1")
+
+
+def write_cell(cell, text, size=10, bold=False, color=BODY_COLOR, align=PP_ALIGN.CENTER):
+    tf = cell.text_frame
+    tf.word_wrap = True
+    set_text_frame_rtl(tf)
+    p = tf.paragraphs[0]
+    write_paragraph(p, text, size=size, bold=bold, color=color, align=align)
 
 
 def setup_matplotlib():
@@ -38,25 +169,6 @@ def setup_matplotlib():
     font_manager.fontManager.addfont(str(FONT_BOLD_PATH))
     plt.rcParams["font.family"] = FONT_NAME
     plt.rcParams["axes.unicode_minus"] = False
-
-
-def set_rtl(paragraph):
-    try:
-        from pptx.oxml.ns import qn
-
-        pPr = paragraph._p.get_or_add_pPr()
-        pPr.set(qn("a:rtl"), "1")
-    except Exception:
-        pass
-
-
-def style_paragraph(paragraph, size=17, bold=False, color=BODY_COLOR, align=PP_ALIGN.RIGHT):
-    paragraph.font.name = FONT_NAME
-    paragraph.font.size = Pt(size)
-    paragraph.font.bold = bold
-    paragraph.font.color.rgb = color
-    paragraph.alignment = align
-    set_rtl(paragraph)
 
 
 def is_dark_background_slide(slide):
@@ -84,19 +196,37 @@ def add_slide_number(slide, number, total):
     footer_line.line.fill.background()
 
     meta_box = slide.shapes.add_textbox(Inches(0.45), Inches(7.08), Inches(4.5), Inches(0.32))
-    meta_p = meta_box.text_frame.paragraphs[0]
-    meta_p.text = f"{COURSE_NAME} | {STUDENT_NAME}"
-    style_paragraph(meta_p, size=10, color=meta_color, align=PP_ALIGN.RIGHT)
+    meta_tf = meta_box.text_frame
+    set_text_frame_rtl(meta_tf)
+    write_paragraph(
+        meta_tf.paragraphs[0],
+        f"{COURSE_NAME} | {STUDENT_NAME}",
+        size=10,
+        color=meta_color,
+        align=PP_ALIGN.RIGHT,
+    )
 
     num_box = slide.shapes.add_textbox(Inches(4.0), Inches(7.05), Inches(2.0), Inches(0.35))
-    num_p = num_box.text_frame.paragraphs[0]
-    num_p.text = f"صفحه {number} از {total}"
-    style_paragraph(num_p, size=11, bold=True, color=number_color, align=PP_ALIGN.CENTER)
+    num_tf = num_box.text_frame
+    set_text_frame_rtl(num_tf)
+    write_paragraph(
+        num_tf.paragraphs[0],
+        f"صفحه {to_persian_digits(number)} از {to_persian_digits(total)}",
+        size=11,
+        bold=True,
+        color=number_color,
+        align=PP_ALIGN.CENTER,
+    )
 
     slide_num_box = slide.shapes.add_textbox(Inches(8.0), Inches(7.08), Inches(1.5), Inches(0.32))
-    slide_num_p = slide_num_box.text_frame.paragraphs[0]
-    slide_num_p.text = str(number)
-    style_paragraph(slide_num_p, size=10, color=meta_color, align=PP_ALIGN.LEFT)
+    slide_num_tf = slide_num_box.text_frame
+    write_paragraph(
+        slide_num_tf.paragraphs[0],
+        to_persian_digits(number),
+        size=10,
+        color=meta_color,
+        align=PP_ALIGN.LEFT,
+    )
 
 
 def apply_slide_numbers(prs):
@@ -117,18 +247,32 @@ def add_title_slide(prs):
     accent.line.fill.background()
 
     title_box = slide.shapes.add_textbox(Inches(0.5), Inches(1.2), Inches(9), Inches(1.5))
-    tp = title_box.text_frame.paragraphs[0]
-    tp.text = "محاسبات درون‌حافظه‌ای با کارایی بالا"
-    style_paragraph(tp, size=34, bold=True, color=TITLE_COLOR, align=PP_ALIGN.CENTER)
+    title_tf = title_box.text_frame
+    set_text_frame_rtl(title_tf)
+    write_paragraph(
+        title_tf.paragraphs[0],
+        "محاسبات درون‌حافظه‌ای با کارایی بالا",
+        size=34,
+        bold=True,
+        color=TITLE_COLOR,
+        align=PP_ALIGN.CENTER,
+    )
 
     sub_box = slide.shapes.add_textbox(Inches(0.5), Inches(2.5), Inches(9), Inches(1.0))
-    sp = sub_box.text_frame.paragraphs[0]
-    sp.text = "بررسی پژوهشی لایه پایگاه‌داده SAP S/4HANA"
-    style_paragraph(sp, size=20, color=ACCENT_COLOR, align=PP_ALIGN.CENTER)
+    sub_tf = sub_box.text_frame
+    set_text_frame_rtl(sub_tf)
+    write_paragraph(
+        sub_tf.paragraphs[0],
+        "بررسی پژوهشی لایه پایگاه‌داده SAP S/4HANA",
+        size=20,
+        color=ACCENT_COLOR,
+        align=PP_ALIGN.CENTER,
+    )
 
     info_box = slide.shapes.add_textbox(Inches(1.5), Inches(3.8), Inches(7), Inches(2.2))
     tf = info_box.text_frame
     tf.word_wrap = True
+    set_text_frame_rtl(tf)
     info_lines = [
         f"ارائه‌دهنده: {STUDENT_NAME}",
         f"استاد درس: {PROFESSOR_NAME}",
@@ -139,8 +283,14 @@ def add_title_slide(prs):
     ]
     for i, line in enumerate(info_lines):
         p = tf.paragraphs[0] if i == 0 else tf.add_paragraph()
-        p.text = line
-        style_paragraph(p, size=18 if i < 3 else 14, bold=i < 3, color=TITLE_COLOR if i < 3 else BODY_COLOR, align=PP_ALIGN.CENTER)
+        write_paragraph(
+            p,
+            line,
+            size=18 if i < 3 else 14,
+            bold=i < 3,
+            color=TITLE_COLOR if i < 3 else BODY_COLOR,
+            align=PP_ALIGN.CENTER,
+        )
         p.space_after = Pt(6)
 
 
@@ -151,16 +301,23 @@ def add_section_slide(prs, title):
     bg.fore_color.rgb = TITLE_COLOR
 
     box = slide.shapes.add_textbox(Inches(0.5), Inches(3.0), Inches(9), Inches(1.2))
-    p = box.text_frame.paragraphs[0]
-    p.text = title
-    style_paragraph(p, size=36, bold=True, color=RGBColor(255, 255, 255), align=PP_ALIGN.CENTER)
+    tf = box.text_frame
+    set_text_frame_rtl(tf)
+    write_paragraph(
+        tf.paragraphs[0],
+        title,
+        size=36,
+        bold=True,
+        color=RGBColor(255, 255, 255),
+        align=PP_ALIGN.CENTER,
+    )
 
 
 def add_slide_header(slide, title):
     title_box = slide.shapes.add_textbox(Inches(0.4), Inches(0.25), Inches(9.2), Inches(0.7))
-    tp = title_box.text_frame.paragraphs[0]
-    tp.text = title
-    style_paragraph(tp, size=24, bold=True, color=TITLE_COLOR)
+    tf = title_box.text_frame
+    set_text_frame_rtl(tf)
+    write_paragraph(tf.paragraphs[0], title, size=24, bold=True, color=TITLE_COLOR)
 
     line = slide.shapes.add_shape(1, Inches(0.4), Inches(0.95), Inches(9.2), Inches(0.02))
     line.fill.solid()
@@ -175,19 +332,18 @@ def add_content_slide(prs, title, bullets, sub_bullets=None, font_size=15):
     body_box = slide.shapes.add_textbox(Inches(0.45), Inches(1.05), Inches(9.1), Inches(6.2))
     tf = body_box.text_frame
     tf.word_wrap = True
+    set_text_frame_rtl(tf)
     sub_bullets = sub_bullets or {}
 
     for i, bullet in enumerate(bullets):
         p = tf.paragraphs[0] if i == 0 else tf.add_paragraph()
-        p.text = "• " + bullet
-        style_paragraph(p, size=font_size)
+        write_paragraph(p, f"• {bullet}", size=font_size)
         p.space_after = Pt(6)
 
         if bullet in sub_bullets:
             for sub in sub_bullets[bullet]:
                 sp = tf.add_paragraph()
-                sp.text = "   ◦ " + sub
-                style_paragraph(sp, size=font_size - 1, color=RGBColor(70, 70, 70))
+                write_paragraph(sp, f"◦ {sub}", size=font_size - 1, color=RGBColor(70, 70, 70))
                 sp.level = 1
 
 
@@ -199,11 +355,11 @@ def add_content_with_image_slide(prs, title, bullets, image_path, image_left=5.0
     body_box = slide.shapes.add_textbox(Inches(0.45), Inches(1.05), Inches(text_width), Inches(6.0))
     tf = body_box.text_frame
     tf.word_wrap = True
+    set_text_frame_rtl(tf)
 
     for i, bullet in enumerate(bullets):
         p = tf.paragraphs[0] if i == 0 else tf.add_paragraph()
-        p.text = "• " + bullet
-        style_paragraph(p, size=font_size)
+        write_paragraph(p, f"• {bullet}", size=font_size)
         p.space_after = Pt(5)
 
     if os.path.exists(image_path):
@@ -219,9 +375,15 @@ def add_image_slide(prs, title, image_path, caption=""):
 
     if caption:
         cap_box = slide.shapes.add_textbox(Inches(0.5), Inches(6.85), Inches(9), Inches(0.5))
-        cp = cap_box.text_frame.paragraphs[0]
-        cp.text = caption
-        style_paragraph(cp, size=12, color=RGBColor(90, 90, 90), align=PP_ALIGN.CENTER)
+        cap_tf = cap_box.text_frame
+        set_text_frame_rtl(cap_tf)
+        write_paragraph(
+            cap_tf.paragraphs[0],
+            caption,
+            size=12,
+            color=RGBColor(90, 90, 90),
+            align=PP_ALIGN.CENTER,
+        )
 
 
 def add_table_slide(prs, title, headers, rows):
@@ -238,18 +400,14 @@ def add_table_slide(prs, title, headers, rows):
 
     for c, header in enumerate(headers):
         cell = table.cell(0, c)
-        cell.text = header
-        for p in cell.text_frame.paragraphs:
-            style_paragraph(p, size=11, bold=True, color=RGBColor(255, 255, 255), align=PP_ALIGN.CENTER)
+        write_cell(cell, header, size=11, bold=True, color=RGBColor(255, 255, 255), align=PP_ALIGN.CENTER)
         cell.fill.solid()
         cell.fill.fore_color.rgb = ACCENT_COLOR
 
     for r, row in enumerate(rows, start=1):
         for c, val in enumerate(row):
             cell = table.cell(r, c)
-            cell.text = val
-            for p in cell.text_frame.paragraphs:
-                style_paragraph(p, size=10, align=PP_ALIGN.CENTER)
+            write_cell(cell, val, size=10, align=PP_ALIGN.CENTER)
             if r % 2 == 0:
                 cell.fill.solid()
                 cell.fill.fore_color.rgb = RGBColor(240, 245, 250)
@@ -821,12 +979,18 @@ def build_presentation():
     bg.solid()
     bg.fore_color.rgb = RGBColor(245, 248, 252)
     box = slide.shapes.add_textbox(Inches(0.5), Inches(2.5), Inches(9), Inches(2))
-    p = box.text_frame.paragraphs[0]
-    p.text = "سپاس از توجه شما"
-    style_paragraph(p, size=36, bold=True, color=TITLE_COLOR, align=PP_ALIGN.CENTER)
-    sub = box.text_frame.add_paragraph()
-    sub.text = f"{STUDENT_NAME}\nسوالات؟"
-    style_paragraph(sub, size=20, color=ACCENT_COLOR, align=PP_ALIGN.CENTER)
+    tf = box.text_frame
+    set_text_frame_rtl(tf)
+    write_paragraph(
+        tf.paragraphs[0],
+        "سپاس از توجه شما",
+        size=36,
+        bold=True,
+        color=TITLE_COLOR,
+        align=PP_ALIGN.CENTER,
+    )
+    write_paragraph(tf.add_paragraph(), STUDENT_NAME, size=20, color=ACCENT_COLOR, align=PP_ALIGN.CENTER)
+    write_paragraph(tf.add_paragraph(), "سوالات؟", size=20, color=ACCENT_COLOR, align=PP_ALIGN.CENTER)
 
     apply_slide_numbers(prs)
     return prs
