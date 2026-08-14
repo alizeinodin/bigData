@@ -75,11 +75,13 @@ def paste_text_on_image(
     font_size: int,
     bold: bool = False,
     color: tuple[float, float, float] = (1, 1, 1),
+    x_center: int | None = None,
 ) -> None:
     from PIL import Image
 
     png_bytes = render_text_png(text, base_rgba.width, font_size, bold, color)
     overlay = Image.open(io.BytesIO(png_bytes)).convert("RGBA")
-    x = (base_rgba.width - overlay.width) // 2
+    cx = base_rgba.width // 2 if x_center is None else x_center
+    x = cx - overlay.width // 2
     y = y_center - overlay.height // 2
     base_rgba.alpha_composite(overlay, (x, y))
